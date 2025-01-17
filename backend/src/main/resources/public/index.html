@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <title>3Dify - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(45deg, #6e7f7f, #304b55, #4285F4, #FF5722);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: white;
+        }
+
+        /* Keyframes for background gradient animation */
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Header Style */
+        h1 {
+            font-size: 3rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        /* Button Styles */
+        #google-login {
+            display: inline-block;
+            background: #4285F4;
+            color: white;
+            padding: 16px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #google-login:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animation for fading in the title */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Additional Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+
+            #google-login {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+        }
+
+        /* Style for the canvas */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h1>Welcome to 3Dify</h1>
+    <div id="google-login"></div>
+</div>
+
+<!-- Animated Background Canvas for 3D Shapes -->
+<canvas id="backgroundCanvas"></canvas>
+
+<script async defer src="https://accounts.google.com/gsi/client"></script>
+<script>
+    // Initialize Google Sign-In
+    window.onload = function () {
+
+        google.accounts.id.initialize({
+            client_id: '371739100499-b8onopfc1o1hr3nm7unnvilqv0t6va77.apps.googleusercontent.com',
+            callback: handleCredentialResponse
+        });
+
+        google.accounts.id.renderButton(
+            document.getElementById('google-login'),
+            {
+                theme: 'outline',
+                size: 'large',
+                shape: 'pill',
+                text: 'sign_in_with',
+                width: '250'
+            }
+        );
+
+        // Start drawing 3D Shapes
+        startBackgroundAnimation();
+    };
+
+    // Handle Google sign-in response
+    function handleCredentialResponse(response) {
+        const googleToken = response.credential;
+        loginWithGoogle(googleToken);
+    }
+
+    // Function to send token to the server
+    function loginWithGoogle(token) {
+        fetch('/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({token: token})
+        })
+            .then(data => {
+                console.log("Server response:", data);
+                localStorage.setItem('jwt', data);
+                console.log("Redirecting to home page");
+                window.location.href = '/upload.html';  // Redirect after successful login
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    // Canvas-based background with simple floating 3D shapes
+    function startBackgroundAnimation() {
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let shapes = [];
+
+        // Shape class for basic 3D shapes (sphere, cube, pyramid)
+        class Shape {
+            constructor(x, y, size, speed, color, type) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.speed = speed;
+                this.color = color;
+                this.type = type; // Type: 'sphere', 'cube', 'pyramid'
+                this.angle = Math.random() * Math.PI * 2;
+                this.angleSpeed = Math.random() * 0.02 + 0.005;
+            }
+
+            draw() {
+                ctx.beginPath();
+                if (this.type === 'sphere') {
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                } else if (this.type === 'cube') {
+                    ctx.rect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+                ctx.closePath();
+            }
+
+            update() {
+                this.x += Math.sin(this.angle) * this.speed;
+                this.y += Math.cos(this.angle) * this.speed;
+                this.angle += this.angleSpeed;
+
+                // Keep shapes within canvas boundaries
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+        }
+
+        // Generate a few random shapes (spheres, cubes, and pyramids)
+        function generateShapes() {
+            const numShapes = 15;  // Fixed number of shapes
+            const shapeTypes = ['sphere', 'cube'];
+            for (let i = 0; i < numShapes; i++) {
+                const randomType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+                const randomSize = Math.random() * 30 + 20; // Size between 20 and 50
+                const randomSpeed = Math.random() * 0.5 + 0.2; // Speed between 0.2 and 0.7
+                const randomColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.6)`;
+                shapes.push(new Shape(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    randomSize,
+                    randomSpeed,
+                    randomColor,
+                    randomType
+                ));
+            }
+        }
+
+        // Start the animation of shapes
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            shapes.forEach(shape => {
+                shape.update();
+                shape.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        generateShapes();  // Create the shapes only once
+        animate();
+    }
+</script>
+
+</body>
+</html>

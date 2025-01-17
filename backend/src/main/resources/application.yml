@@ -1,0 +1,40 @@
+micronaut:
+  application:
+    name: micronaut-app
+  server:
+    port: 8000
+    max-request-size: '100MB'
+    multipart:
+      max-file-size: '100MB'
+    cors:
+      enabled: true
+      configuration:
+        allowedOrigins:
+          - http://localhost:*
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowedHeaders:
+          - Content-Type
+          - Authorization
+          - Origin
+          - Accept
+          - X-Requested-With
+          - X-CSRF-TOKEN
+          - X-Auth-Token
+          - X-XSRF-TOKEN
+
+google:
+  client-id: "371739100499-b8onopfc1o1hr3nm7unnvilqv0t6va77.apps.googleusercontent.com"
+
+# MongoDB Configuration
+mongodb:
+  uri: mongodb://admin:password@localhost:27017/threedify?authSource=admin
+
+# RabbitMQ Configuration
+rabbitmq:
+  uri: amqp://guest:guest@localhost:5672
+
