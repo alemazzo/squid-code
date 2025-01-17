@@ -1,8 +1,0 @@
-test-resources:
-  mongodb:
-    host: localhost
-    port: 27017
-    database: test
-  containers:
-    rabbitmq:
-      image-name: rabbitmq:3.8.3-management
