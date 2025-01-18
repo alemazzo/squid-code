@@ -12,7 +12,7 @@
       }
     }
   
-    function startGame(level) {
+    async function startGame(level) {
       console.log(`Starting game with level: ${level}`);
       let problem = await getRandomLeetCodeQuestion(level);
         console.log("Random LeetCode Question: ", problem);
