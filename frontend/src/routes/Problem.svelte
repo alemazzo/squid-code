@@ -15,6 +15,7 @@
 
   let timeForCode;
   let countdownInterval;
+  let timerInterval;
 
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -36,14 +37,14 @@
 
   const startTimer = async () => {
     sendInitialNotification();
-    const interval = setInterval(() => {
+    timerInterval = setInterval(() => {
       if (timeLeft > 0) {
         timeLeft -= 1;
         if (timeLeft % 60 === 0) {
           sendNotification(timeLeft);
         }
       } else {
-        clearInterval(interval); // Stop the timer when it reaches 0
+        clearInterval(timerInterval); // Stop the timer when it reaches 0
         window.open("https://leetcode.com/problems/" + id, "_blank");
         navigate(`/problem/${id}/coding`); // Redirect to the coding page
       }
@@ -106,7 +107,7 @@
   const handleStartCoding = () => {
     console.log("Starting to code...");
     window.open("https://leetcode.com/problems/" + id, "_blank");
-    clearInterval(timeLeft); // Stop the timer
+    clearInterval(timerInterval); // Stop the timer
     navigate(`/problem/${id}/coding`); // Redirect to the coding page
   };
 </script>
