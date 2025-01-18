@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { getLeetcodeInfo, getLeetCodeSubmission } from "../api/leetcode";
   import { navigate } from "svelte-routing";
+	import { send } from "process";
 
   export let id;
 
@@ -29,11 +30,13 @@
 
               let problem = await getLeetcodeInfo(id);
               console.log("LeetCode Problem: ", problem);
+              sendWinNotification(problem);
               navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
           } else if (submission.statusDisplay === "Internal Error") {
               // Retry after 10 seconds
           } else {
               clearInterval(timerInterval);
+              sendFailNotification();
               navigate(`/squid-code/fail`);
           }
       }
@@ -69,6 +72,20 @@
   // Function to send notification
   function sendNotification(seconds) {
       new Notification(`${secondsToMinutes(seconds)} minutes remaining`);
+  }
+
+  // Function to send win notification
+  function sendWinNotification(problem) {
+      new Notification("Congratulations!", {
+          body: `You have successfully solved the problem: ${problem.title}`,
+      });
+  }
+
+  // Function to send fail notification
+  function sendFailNotification() {
+      new Notification("Time's up!", {
+          body: "You have failed to solve the problem. Better luck next time!",
+      });
   }
 
   // Start the timer immediately when the component is mounted
