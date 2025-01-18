@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { getLeetcodeInfo, getLeetCodeSubmission } from "../api/leetcode";
   import { navigate } from "svelte-routing";
-	import { send } from "process";
 
   export let id;
 
