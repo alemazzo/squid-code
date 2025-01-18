@@ -64,7 +64,7 @@
 
   // Function to send notification
   function sendNotification(seconds) {
-      new Notification(`${secondsToMinutes(seconds)} remaining`);
+      new Notification(`${secondsToMinutes(seconds)} minutes remaining`);
   }
 
   // Start the timer immediately when the component is mounted
