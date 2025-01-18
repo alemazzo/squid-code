@@ -14,37 +14,23 @@
       const seconds = time % 60;
       return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     };
-  
-    // Decrement time every second
-    const startTimer = () => {
-      timerInterval = setInterval(async () => {
-        if (timeLeft > 0) {
-          timeLeft--;
-          // Every 5 seconds, show an alert message with the remaining time
-          if (timeLeft % 300 === 0) {
-            sendNotification(timeLeft);
-          }
-            if (timeLeft % 10 === 0) {
-                // Send a browser notification
-                
-                let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
+
+    async function checkSubmission(timer) {
+      let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
                 console.log("Submission: ", submission);
                 if (submission != null) {
                   clearInterval(timerInterval);
                     if (submission.statusDisplay === "Accepted") {
-                        alert("Congratulations! You passed the coding interview.");
                         let problem = await getLeetcodeInfo(id);
                         console.log("LeetCode Problem: ", problem);
                         navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
                     }
 
                     if (submission.statusDisplay === "Wrong Answer") {
-                        alert("Wrong Answer! You failed the coding interview.");
                         navigate(`/squid-code/fail`);
                     }
 
                     if (submission.statusDisplay === "Time Limit Exceeded") {
-                        alert("Time Limit Exceeded! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
@@ -54,12 +40,10 @@
                     }
 
                     if (submission.statusDisplay === "Memory Limit Exceeded") {
-                        alert("Memory Limit Exceeded! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.statusDisplay === "Compile Error") {
-                        alert("Compile Error! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
@@ -68,6 +52,21 @@
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
+                  }
+                }
+  
+    // Decrement time every second
+    const startTimer = () => {
+      timerInterval = setInterval(async () => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          if (timeLeft % 300 === 0) {
+            sendNotification(timeLeft);
+          }
+            if (timeLeft % 10 === 0) {
+                // Send a browser notification
+                
+                
                 }
             }
         } else {
