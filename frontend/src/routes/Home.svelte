@@ -203,12 +203,13 @@ p.description span {
   <p class="description">
     Welcome to Squid Code! 
     <br /> 
-    Choose a difficulty and brace yourself for a random LeetCode problem.
+    Pick a difficulty and get ready for a challenge. 
     <br /> 
-    It's just like an interview, but with none of the preparation or the paycheck. 
+    Your LeetCode username will be needed to play
     <br />
-    Don't forget to use your LeetCode account to submit your solution!
+    Things are about to get interesting...
   </p>
+  
   
 
   <div class="input-container">

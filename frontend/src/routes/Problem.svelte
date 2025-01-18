@@ -6,13 +6,15 @@
   export let id;
   let problem = {};
 
-  const original_timeLeft = 10 * 60; // 10 minutes in seconds
-  const original_countdown = 30; // 30 seconds for countdown
+  let original_timeLeft = 0; // 10 minutes in seconds
+  let original_countdown = 30; // 30 seconds for countdown
 
   let interval;
   let modalVisible = true; // Control visibility of the modal
   let timeLeft = original_timeLeft;
   let countdown = original_countdown; // Countdown for modal (30 seconds)
+
+  let timeForCode;
 
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -65,6 +67,19 @@
   onMount(async () => {
     try {
       problem = await getLeetcodeInfo(id);
+      if (problem.difficulty === "Easy") {
+        original_timeLeft = 10 * 60; //
+        timeLeft = original_timeLeft;
+        timeForCode = 15 * 60; //
+      } else if (problem.difficulty === "Medium") {
+        original_timeLeft = 15 * 60; //
+        timeLeft = original_timeLeft;
+        timeForCode = 30 * 60; //
+      } else {
+        original_timeLeft = 20 * 60; //
+        timeLeft = original_timeLeft;
+        timeForCode = 45 * 60; // 
+      }
       console.log("LeetCode Problem: ", problem);
       startCountdown(); // Start the countdown when problem is fetched
     } catch (error) {
@@ -291,7 +306,7 @@
           Make sure your account is the same as the one entered here.
         </p>
         <p class="info">
-          A timer of 20 minutes will start for you to solve the problem waiting for a submission to be found.
+          A timer of {secondsToMinutes(timeForCode)} minutes will start for you to solve the problem waiting for a submission to be found.
         </p>
 
         <!-- Skip button with Icon -->

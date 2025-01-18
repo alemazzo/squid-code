@@ -2,10 +2,12 @@
   import { onMount } from "svelte";
   import { getLeetcodeInfo, getLeetCodeSubmission } from "../api/leetcode";
   import { navigate } from "svelte-routing";
+	import Problem from "./Problem.svelte";
 
   export let id;
 
-  let timeLeft = 20 * 60; // 20 minutes in seconds
+  let problem;
+  let timeLeft = 0; // 20 minutes in seconds
   let timerInterval;
 
   // Format time into MM:SS
@@ -63,7 +65,7 @@
   // Function to send initial notification
   function sendInitialNotification() {
       new Notification("Coding interview started", {
-          body: "You have 20 minutes to solve the problem. Good luck!",
+          body: "You have " + secondsToMinutes(timeLeft) + " minutes to solve the problem",
       });
   }
 
@@ -87,7 +89,15 @@
   }
 
   // Start the timer immediately when the component is mounted
-  onMount(() => {
+  onMount(async () => {
+     problem = await getLeetcodeInfo(id);
+     if (problem.difficulty === "Easy") {
+         timeLeft = 15 * 60; // 10 minutes for Easy problems
+      } else if (problem.difficulty === "Medium") {
+          timeLeft = 30 * 60; // 15 minutes for Medium problems
+      } else {
+          timeLeft = 45 * 60; // 20 minutes for Hard problems
+      }
       if (Notification.permission !== "granted") {
           Notification.requestPermission().then(permission => {
               if (permission === "granted") {
@@ -142,6 +152,7 @@
     font-weight: bold;
     color: #f39c12;
     margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .status-waiting {
@@ -168,6 +179,12 @@
 </style>
 
 <div class="container">
+  {#if problem}
+  <div class="status-message">
+    <p class="status-waiting"> Problem: {@html problem.title}</p>
+  </div>
+  {/if}
+  
   <div class="timer">
       {formatTime(timeLeft)}
   </div>
