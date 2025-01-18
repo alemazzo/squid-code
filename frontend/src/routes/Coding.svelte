@@ -30,8 +30,8 @@
                 let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
                 console.log("Submission: ", submission);
                 if (submission != null) {
+                  clearInterval(timerInterval);
                     if (submission.statusDisplay === "Accepted") {
-                        clearInterval(timerInterval);
                         alert("Congratulations! You passed the coding interview.");
                         let problem = await getLeetcodeInfo(id);
                         console.log("LeetCode Problem: ", problem);
@@ -39,37 +39,31 @@
                     }
 
                     if (submission.statusDisplay === "Wrong Answer") {
-                        clearInterval(timerInterval);
                         alert("Wrong Answer! You failed the coding interview.");
                         navigate(`/squid-code/fail`);
                     }
 
                     if (submission.statusDisplay === "Time Limit Exceeded") {
-                        clearInterval(timerInterval);
                         alert("Time Limit Exceeded! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.statusDisplay === "Runtime Error") {
-                        clearInterval(timerInterval);
                         alert("Runtime Error! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.statusDisplay === "Memory Limit Exceeded") {
-                        clearInterval(timerInterval);
                         alert("Memory Limit Exceeded! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.statusDisplay === "Compile Error") {
-                        clearInterval(timerInterval);
                         alert("Compile Error! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.statusDisplay === "Unknown Error") {
-                        clearInterval(timerInterval);
                         alert("Unknown Error! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }

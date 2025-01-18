@@ -1,6 +1,14 @@
 <script>
-    // This component doesn't require logic, just a funny message for the "You Failed" page
+  
+  import { navigate } from 'svelte-routing';
+
+  function home() {
+    navigate('/squid-code');
+  }
+  
+  // This component doesn't require logic, just a funny message for the "You Failed" page
   </script>
+
   
   <style>
     /* Global Styles */
@@ -125,7 +133,7 @@
          <img class="fail-image" src="https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif" alt="Fail Image" />
          </div>
     
-      <button class="try-again-button" on:click={() => window.location.href = '/'}>
+      <button class="try-again-button" on:click={home}>
         Try Again... If You Dare
       </button>
   </div>
