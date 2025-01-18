@@ -21,9 +21,12 @@
         if (timeLeft > 0) {
           timeLeft--;
           // Every 5 seconds, show an alert message with the remaining time
-            if (timeLeft % 5 === 0) {
+          if (timeLeft % 300 === 0) {
+            sendNotification(timeLeft);
+          }
+            if (timeLeft % 10 === 0) {
                 // Send a browser notification
-                sendNotification(timeLeft);
+                
                 let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
                 console.log("Submission: ", submission);
                 if (submission != null) {
@@ -62,7 +65,7 @@
                     if (submission.statusDisplay === "Compile Error") {
                         clearInterval(timerInterval);
                         alert("Compile Error! You failed the coding interview.");
-                        window.location.href = "/fail"; // Redirect to the fail page
+                        navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.statusDisplay === "Unknown Error") {
