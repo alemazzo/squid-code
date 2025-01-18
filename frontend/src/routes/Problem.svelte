@@ -9,12 +9,12 @@
   let original_timeLeft = 0; // 10 minutes in seconds
   let original_countdown = 30; // 30 seconds for countdown
 
-  let interval;
   let modalVisible = true; // Control visibility of the modal
   let timeLeft = original_timeLeft;
   let countdown = original_countdown; // Countdown for modal (30 seconds)
 
   let timeForCode;
+  let countdownInterval;
 
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -34,8 +34,8 @@
     return `${minutes}:${seconds}`;
   };
 
-  const startTimer = () => {
-    interval = setInterval(() => {
+  const startTimer = async () => {
+    const interval = setInterval(() => {
       if (timeLeft > 0) {
         timeLeft -= 1;
         if (timeLeft % 60 === 0) {
@@ -50,7 +50,7 @@
   };
 
   const startCountdown = () => {
-    const countdownInterval = setInterval(() => {
+    countdownInterval = setInterval(() => {
       if (countdown > 0) {
         countdown -= 1;
       } else {
@@ -62,7 +62,7 @@
   };
 
   const skipCountdown = () => {
-    clearInterval(countdown); // Stop the countdown
+    clearInterval(countdownInterval); // Stop the countdown
     modalVisible = false; // Hide the modal immediately
     startTimer(); // Start the main timer
   };
