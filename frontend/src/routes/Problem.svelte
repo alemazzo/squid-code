@@ -106,6 +106,7 @@
   const handleStartCoding = () => {
     console.log("Starting to code...");
     window.open("https://leetcode.com/problems/" + id, "_blank");
+    clearInterval(timeLeft); // Stop the timer
     navigate(`/problem/${id}/coding`); // Redirect to the coding page
   };
 </script>
