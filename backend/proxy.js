@@ -69,12 +69,7 @@ app.get("/leetcode/submissions/:problemId/:user", async (req, res) => {
     const { problemId, user } = req.params;
     console.log(`Fetching submissions for problem ${problemId} by ${user}`);
     const submission = await getLatestSubmissionOfProblem(problemId, user);
-    if (submission) {
-        res.json(submission);
-    }
-    else {
-        res.status(404).send("Submission not found");
-    }
+    res.json(submission);
 })
 
 

@@ -89,8 +89,7 @@
 
 <style>
   /* General Styles */
-/* General Styles */
-body {
+  body {
     margin: 0;
     font-family: 'Arial', sans-serif;
     background-color: #1e1e1e;
@@ -100,19 +99,19 @@ body {
     align-items: center;
     height: 100vh;
     text-align: center;
-}
+  }
 
-.container {
+  .container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 100%;
     box-sizing: border-box;
-}
+  }
 
-/* Timer Style */
-.timer {
+  /* Timer Style */
+  .timer {
     font-size: 8rem;
     font-weight: bold;
     color: #f39c12;
@@ -120,51 +119,37 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
-}
+  }
 
-/* Message and Status */
-.status-message {
+  /* Message and Status */
+  .status-message {
     font-size: 2rem;
     font-weight: bold;
     color: #f39c12;
     margin-top: 40px;
-}
+  }
 
-.status-waiting {
+  .status-waiting {
     color: #f39c12;
-}
+  }
 
-.status-found {
+  .status-found {
     color: #28a745; /* Green for success */
-}
+  }
 
-.status-failed {
+  .status-failed {
     color: #dc3545; /* Red for failure */
-}
+  }
 
-/* Spinning Wheel */
-.spinner {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #f39c12;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 2s linear infinite;
-    
-    /* Center the spinner inside the container */
+  /* GIF Styling */
+  .gif {
+    margin-top: 30px;
+    width: 100%; /* Adjust size as needed */
+    height: auto;
     display: block;
     margin-left: auto;
     margin-right: auto;
-}
-
-/* Add the spin animation */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
+  }
 </style>
 
 <div class="container">
@@ -175,11 +160,14 @@ body {
   <div class="status-message">
       {#if submissionStatus === 'waiting'}
           <p class="status-waiting">Waiting for your submission...</p>
-          <div class="spinner"></div>
+          <!-- Squid Game Pink Man GIF (Centered) -->
+          <img class="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazBwMG92ZHJicnZiamp4M2w5OGVuM2twOXQxMXlucHlpbHpjc24zeCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/eIG0HfouRQJQr1wBzz/giphy.gif" alt="Squid Game Pink Man" />
       {:else if submissionStatus === 'found'}
           <p class="status-found">{submissionResult}</p>
+          <!-- You can add a congratulatory GIF here if needed -->
       {:else if submissionStatus === 'failed'}
           <p class="status-failed">{submissionResult}</p>
+          <!-- You can add a failure GIF here if needed -->
       {/if}
   </div>
 </div>
