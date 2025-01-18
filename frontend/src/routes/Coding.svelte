@@ -17,43 +17,43 @@
 
     async function checkSubmission(timer) {
       let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
-                console.log("Submission: ", submission);
-                if (submission != null) {
-                  clearInterval(timerInterval);
-                    if (submission.statusDisplay === "Accepted") {
-                        let problem = await getLeetcodeInfo(id);
-                        console.log("LeetCode Problem: ", problem);
-                        navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
-                    }
+        console.log("Submission: ", submission);
+        if (submission != null) {
+          clearInterval(timerInterval);
+            if (submission.statusDisplay === "Accepted") {
+                let problem = await getLeetcodeInfo(id);
+                console.log("LeetCode Problem: ", problem);
+                navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
+            }
 
-                    if (submission.statusDisplay === "Wrong Answer") {
-                        navigate(`/squid-code/fail`);
-                    }
+            if (submission.statusDisplay === "Wrong Answer") {
+                navigate(`/squid-code/fail`);
+            }
 
-                    if (submission.statusDisplay === "Time Limit Exceeded") {
-                        navigate(`/squid-code/fail`); // Redirect to the fail page
-                    }
+            if (submission.statusDisplay === "Time Limit Exceeded") {
+                navigate(`/squid-code/fail`); // Redirect to the fail page
+            }
 
-                    if (submission.statusDisplay === "Runtime Error") {
-                        alert("Runtime Error! You failed the coding interview.");
-                        navigate(`/squid-code/fail`); // Redirect to the fail page
-                    }
+            if (submission.statusDisplay === "Runtime Error") {
+                alert("Runtime Error! You failed the coding interview.");
+                navigate(`/squid-code/fail`); // Redirect to the fail page
+            }
 
-                    if (submission.statusDisplay === "Memory Limit Exceeded") {
-                        navigate(`/squid-code/fail`); // Redirect to the fail page
-                    }
+            if (submission.statusDisplay === "Memory Limit Exceeded") {
+                navigate(`/squid-code/fail`); // Redirect to the fail page
+            }
 
-                    if (submission.statusDisplay === "Compile Error") {
-                        navigate(`/squid-code/fail`); // Redirect to the fail page
-                    }
+            if (submission.statusDisplay === "Compile Error") {
+                navigate(`/squid-code/fail`); // Redirect to the fail page
+            }
 
-                    if (submission.statusDisplay === "Unknown Error") {
-                        alert("Unknown Error! You failed the coding interview.");
-                        navigate(`/squid-code/fail`); // Redirect to the fail page
-                    }
+            if (submission.statusDisplay === "Unknown Error") {
+                alert("Unknown Error! You failed the coding interview.");
+                navigate(`/squid-code/fail`); // Redirect to the fail page
+            }
 
-                  }
-                }
+          }
+        }
   
     // Decrement time every second
     const startTimer = () => {
@@ -64,10 +64,7 @@
             sendNotification(timeLeft);
           }
             if (timeLeft % 10 === 0) {
-                // Send a browser notification
-                
-                
-                }
+                checkSubmission(timerInterval);
             }
         } else {
           clearInterval(timerInterval);
