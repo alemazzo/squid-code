@@ -22,7 +22,7 @@
   
     onMount(() => {
       console.log("Mounted Home.svelte");
-      const savedUsername = localStorage.getItem("leetcodeUsername");
+      const savedUsername = localStorage.getItem("username");
       if (savedUsername) {
         username = savedUsername;
         validateUsername();
