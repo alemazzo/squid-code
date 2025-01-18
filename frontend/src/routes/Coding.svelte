@@ -21,13 +21,12 @@
     return minutes;
   };
 
-  async function checkSubmission(timer) {
+  async function checkSubmission() {
       let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
       console.log("Submission: ", submission);
       if (submission != null) {
           if (submission.statusDisplay === "Accepted") {
-          clearInterval(timerInterval);
-
+              clearInterval(timerInterval);
               let problem = await getLeetcodeInfo(id);
               console.log("LeetCode Problem: ", problem);
               sendWinNotification(problem);
@@ -51,8 +50,8 @@
         if (timeLeft % 60 === 0) {
           sendNotification(timeLeft);
         }
-        if (timeLeft % 10 === 0) {
-          checkSubmission(timerInterval);
+        if (timeLeft % 5 === 0) {
+          checkSubmission();
         }
       } else {
         clearInterval(timerInterval);
