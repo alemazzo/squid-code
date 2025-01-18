@@ -285,8 +285,6 @@
   font-size: 1.5rem; /* Adjust the size of the icon */
 }
 
-
-  /* Animation for the gif */
 </style>
 
 <div class="container">
@@ -294,7 +292,7 @@
   {#if modalVisible}
     <div class="modal">
       <div class="modal-content">
-        <p>Get ready! You have {original_countdown} seconds to prepare your interview.</p>
+        <p>Get ready! Your interview will start in {original_countdown} seconds.</p>
         <img class="gif" src="https://media.giphy.com/media/pDgHg2Lcju3Ty/giphy.gif?cid=790b7611noyctyssiy1q495shqesx6tr1sa0jx2k1prtvzno&ep=v1_gifs_search&rid=giphy.gif&ct=g" alt="Trolling GIF" />
         <p class="countdown">{secondsToMinutesSeconds(countdown)}</p>
         
@@ -311,7 +309,7 @@
 
         <!-- Skip button with Icon -->
         <button class="skip-button" on:click={skipCountdown}>
-          Start Round
+          Start Interview
         </button>
         
       </div>
