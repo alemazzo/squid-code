@@ -14,7 +14,7 @@
     }
 
     function goHome() {
-        window.location.href = "/";
+        navigate(`/squid-code`);
     }
 
     async function nextRound() {
