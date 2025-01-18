@@ -31,13 +31,13 @@
               let problem = await getLeetcodeInfo(id);
               console.log("LeetCode Problem: ", problem);
               sendWinNotification(problem);
-              navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
+              navigate(`/problem/${problem["titleSlug"]}/win`);
           } else if (submission.statusDisplay === "Internal Error") {
               // Retry after 10 seconds
           } else {
               clearInterval(timerInterval);
               sendFailNotification();
-              navigate(`/squid-code/fail`);
+              navigate(`/fail`);
           }
       }
   }
@@ -56,7 +56,7 @@
         }
       } else {
         clearInterval(timerInterval);
-        navigate(`/squid-code/fail`);
+        navigate(`/fail`);
       }
     }, 1000);
     

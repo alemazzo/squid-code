@@ -3,7 +3,7 @@
   import { navigate } from 'svelte-routing';
 
   function home() {
-    navigate('/squid-code');
+    navigate('/');
   }
   
   // This component doesn't require logic, just a funny message for the "You Failed" page

@@ -17,7 +17,7 @@
     console.log(`Starting game with level: ${level}`);
     let problem = await getRandomLeetCodeQuestion(level);
     console.log("Random LeetCode Question: ", problem);
-    navigate(`/squid-code/problem/${problem["titleSlug"]}`);
+    navigate(`/problem/${problem["titleSlug"]}`);
   }
   
   onMount(() => {

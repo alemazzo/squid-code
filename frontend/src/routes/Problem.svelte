@@ -41,7 +41,7 @@
       } else {
         clearInterval(interval); // Stop the timer when it reaches 0
         window.open("https://leetcode.com/problems/" + id, "_blank");
-        navigate(`/squid-code/problem/${id}/coding`); // Redirect to the coding page
+        navigate(`/problem/${id}/coding`); // Redirect to the coding page
       }
     }, 1000);
   };
@@ -90,7 +90,7 @@
   const handleStartCoding = () => {
     console.log("Starting to code...");
     window.open("https://leetcode.com/problems/" + id, "_blank");
-    navigate(`/squid-code/problem/${id}/coding`); // Redirect to the coding page
+    navigate(`/problem/${id}/coding`); // Redirect to the coding page
   };
 </script>
 
