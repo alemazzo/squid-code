@@ -31,10 +31,11 @@
         console.error("Error fetching problem: ", error);
         }
     });
-    
+
   </script>
   
   <style>
+    
     body {
       margin: 0;
       font-family: 'Arial', sans-serif;
