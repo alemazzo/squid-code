@@ -45,13 +45,13 @@
   const startTimer = () => {
     timerInterval = setInterval(async () => {
       if (timeLeft > 0) {
+        timeLeft--;
         if (timeLeft % 60 === 0) {
           sendNotification(timeLeft);
         }
         if (timeLeft % 10 === 0) {
           checkSubmission(timerInterval);
         }
-        timeLeft--;
       } else {
         clearInterval(timerInterval);
         submissionStatus = "failed";
@@ -60,7 +60,15 @@
         navigate(`/squid-code/fail`);
       }
     }, 1000);
+    sendInitialNotification();
   };
+
+  // Function to send initial notification
+  function sendInitialNotification() {
+      new Notification("Coding interview started", {
+          body: "You have 20 minutes to solve the problem. Good luck!",
+      });
+  }
 
   // Function to send notification
   function sendNotification(seconds) {
