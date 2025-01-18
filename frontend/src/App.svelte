@@ -18,10 +18,10 @@
 <Router {url}>
   <!-- Main Content -->
   <main class="main-content">
-    <Route path="/" component={Home} />
-    <Route path="/problem/:id" component={Problem} />
-    <Route path="/problem/:id/coding" component={Coding} />
-    <Route path="/problem/:id/win" component={Win} />
-    <Route path="/fail" component={Fail} />
+    <Route path="/squid-code/" component={Home} />
+    <Route path="/squid-code/problem/:id" component={Problem} />
+    <Route path="/squid-code/problem/:id/coding" component={Coding} />
+    <Route path="/squid-code/problem/:id/win" component={Win} />
+    <Route path="/squid-code/fail" component={Fail} />
   </main>
 </Router>
