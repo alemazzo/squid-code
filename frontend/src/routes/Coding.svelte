@@ -27,7 +27,7 @@
                 let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
                 console.log("Submission: ", submission);
                 if (submission != null) {
-                    if (submission.status === "Accepted") {
+                    if (submission.statusDisplay === "Accepted") {
                         clearInterval(timerInterval);
                         alert("Congratulations! You passed the coding interview.");
                         let problem = await getLeetcodeInfo(id);
@@ -35,37 +35,37 @@
                         navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
                     }
 
-                    if (submission.status === "Wrong Answer") {
+                    if (submission.statusDisplay === "Wrong Answer") {
                         clearInterval(timerInterval);
                         alert("Wrong Answer! You failed the coding interview.");
                         navigate(`/squid-code/fail`);
                     }
 
-                    if (submission.status === "Time Limit Exceeded") {
+                    if (submission.statusDisplay === "Time Limit Exceeded") {
                         clearInterval(timerInterval);
                         alert("Time Limit Exceeded! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
-                    if (submission.status === "Runtime Error") {
+                    if (submission.statusDisplay === "Runtime Error") {
                         clearInterval(timerInterval);
                         alert("Runtime Error! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
-                    if (submission.status === "Memory Limit Exceeded") {
+                    if (submission.statusDisplay === "Memory Limit Exceeded") {
                         clearInterval(timerInterval);
                         alert("Memory Limit Exceeded! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
-                    if (submission.status === "Compile Error") {
+                    if (submission.statusDisplay === "Compile Error") {
                         clearInterval(timerInterval);
                         alert("Compile Error! You failed the coding interview.");
                         window.location.href = "/fail"; // Redirect to the fail page
                     }
 
-                    if (submission.status === "Unknown Error") {
+                    if (submission.statusDisplay === "Unknown Error") {
                         clearInterval(timerInterval);
                         alert("Unknown Error! You failed the coding interview.");
                         navigate(`/squid-code/fail`); // Redirect to the fail page
