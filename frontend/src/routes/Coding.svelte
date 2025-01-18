@@ -24,14 +24,16 @@
       let submission = await getLeetCodeSubmission(id, localStorage.getItem("username"));
       console.log("Submission: ", submission);
       if (submission != null) {
-          clearInterval(timerInterval);
           if (submission.statusDisplay === "Accepted") {
+          clearInterval(timerInterval);
+
               let problem = await getLeetcodeInfo(id);
               console.log("LeetCode Problem: ", problem);
               navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
           } else if (submission.statusDisplay === "Internal Error") {
               // Retry after 10 seconds
           } else {
+              clearInterval(timerInterval);
               navigate(`/squid-code/fail`);
           }
       }
