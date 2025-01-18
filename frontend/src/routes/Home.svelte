@@ -14,10 +14,9 @@
   
     function startGame(level) {
       console.log(`Starting game with level: ${level}`);
-      getRandomLeetCodeQuestion(level).then((question) => {
-        console.log("Random LeetCode Question:");
-        window.location.href = `/squid-code/problems/${question["titleSlug"]}`;
-      });
+      let problem = await getRandomLeetCodeQuestion(level);
+        console.log("Random LeetCode Question: ", problem);
+        window.location.href = `/squid-code/problem/${problem["titleSlug"]}`;
     }
   
     onMount(() => {
