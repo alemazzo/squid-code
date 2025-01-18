@@ -9,7 +9,7 @@
         console.log(`Starting game with level: ${level}`);
         getRandomLeetCodeQuestion(level).then(async (question) => {
             console.log("Random LeetCode Question:");
-            navigate(`/squid-code/problem/${question.id}`);
+            navigate(`/squid-code/problem/${question["titleSlug"]}`);
         });
     }
 
