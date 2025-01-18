@@ -28,11 +28,11 @@
       if (submission != null) {
           clearInterval(timerInterval);
           if (submission.statusDisplay === "Accepted") {
-              submissionStatus = "found";
-              submissionResult = "Congratulations! Your solution is Accepted!";
               let problem = await getLeetcodeInfo(id);
               console.log("LeetCode Problem: ", problem);
               navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
+          } else if (submission.statusDisplay === "Internal Error") {
+              // Retry after 10 seconds
           } else {
               submissionStatus = "failed";
               submissionResult = `Submission Failed: ${submission.statusDisplay}`;
