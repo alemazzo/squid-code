@@ -28,6 +28,7 @@
     "vite": "^6.0.1"
   },
   "dependencies": {
+    "@leetnotion/leetcode-api": "^1.10.0",
     "@tanstack/svelte-query": "^5.62.7",
     "axios": "^1.7.9",
     "page": "^1.3.7"
