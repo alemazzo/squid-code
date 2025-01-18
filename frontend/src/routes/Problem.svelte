@@ -28,6 +28,17 @@
     return minutes;
   };
 
+  const secondsToMinutesSeconds = (timeInSeconds) => {
+    let minutes = Math.floor(timeInSeconds / 60);
+    if (minutes < 10) {
+      minutes = `0${minutes}`;
+    }
+    let seconds = timeInSeconds % 60;
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+    return `${minutes}:${seconds}`;
+  };
   // Countdown function that decrements the timer each second
   const startTimer = () => {
     interval = setInterval(() => {
@@ -245,7 +256,7 @@
       <div class="modal-content">
         <p>Get ready! You have {original_countdown} seconds to prepare your interview.</p>
         <img class="gif" src="https://media.giphy.com/media/pDgHg2Lcju3Ty/giphy.gif?cid=790b7611noyctyssiy1q495shqesx6tr1sa0jx2k1prtvzno&ep=v1_gifs_search&rid=giphy.gif&ct=g" alt="Trolling GIF" />
-        <p class="countdown">Time left: {countdown}</p>
+        <p class="countdown">{secondsToMinutesSeconds(countdown)}</p>
         
         <p class="info">
           You will now have {secondsToMinutes(original_timeLeft)} minutes to analyze the problem and brainstorm a solution (no coding yet).
