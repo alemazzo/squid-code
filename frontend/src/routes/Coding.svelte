@@ -7,8 +7,6 @@
 
   let timeLeft = 20 * 60; // 20 minutes in seconds
   let timerInterval;
-  let submissionStatus = "waiting"; // Possible values: "waiting", "found", "failed"
-  let submissionResult = "";
 
   // Format time into MM:SS
   const formatTime = (time) => {
@@ -34,8 +32,6 @@
           } else if (submission.statusDisplay === "Internal Error") {
               // Retry after 10 seconds
           } else {
-              submissionStatus = "failed";
-              submissionResult = `Submission Failed: ${submission.statusDisplay}`;
               navigate(`/squid-code/fail`);
           }
       }
@@ -43,6 +39,7 @@
 
   // Decrement time every second
   const startTimer = () => {
+    sendInitialNotification();
     timerInterval = setInterval(async () => {
       if (timeLeft > 0) {
         timeLeft--;
@@ -54,13 +51,10 @@
         }
       } else {
         clearInterval(timerInterval);
-        submissionStatus = "failed";
-        submissionResult = "Time's up! You failed the coding interview.";
-        alert(submissionResult);
         navigate(`/squid-code/fail`);
       }
     }, 1000);
-    sendInitialNotification();
+    
   };
 
   // Function to send initial notification
@@ -162,16 +156,8 @@
   </div>
 
   <div class="status-message">
-      {#if submissionStatus === 'waiting'}
-          <p class="status-waiting">Waiting for your submission...</p>
-          <!-- Squid Game Pink Man GIF (Centered) -->
-          <img class="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazBwMG92ZHJicnZiamp4M2w5OGVuM2twOXQxMXlucHlpbHpjc24zeCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/eIG0HfouRQJQr1wBzz/giphy.gif" alt="Squid Game Pink Man" />
-      {:else if submissionStatus === 'found'}
-          <p class="status-found">{submissionResult}</p>
-          <!-- You can add a congratulatory GIF here if needed -->
-      {:else if submissionStatus === 'failed'}
-          <p class="status-failed">{submissionResult}</p>
-          <!-- You can add a failure GIF here if needed -->
-      {/if}
+    <p class="status-waiting">Waiting for your submission...</p>
+    <!-- Squid Game Pink Man GIF (Centered) -->
+    <img class="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazBwMG92ZHJicnZiamp4M2w5OGVuM2twOXQxMXlucHlpbHpjc24zeCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/eIG0HfouRQJQr1wBzz/giphy.gif" alt="Squid Game Pink Man" />
   </div>
 </div>
