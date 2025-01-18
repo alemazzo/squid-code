@@ -9,7 +9,7 @@
         console.log(`Starting game with level: ${level}`);
         getRandomLeetCodeQuestion(level).then(async (question) => {
             console.log("Random LeetCode Question:");
-            window.location.href = `/problem/${question.id}`;
+            window.location.href = `/squid-code/problem/${question.id}`;
         });
     }
 
@@ -20,7 +20,7 @@
     async function nextRound() {
         let difficulty = problem["difficulty"];
         let newProblem = await getRandomLeetCodeQuestion(difficulty);
-        window.location.href = `/problem/${newProblem.id}`;
+        window.location.href = `/squid-code/problem/${newProblem["titleSlug"]}`;
     }
 
     onMount(async () => {
@@ -35,7 +35,7 @@
   </script>
   
   <style>
-    
+
     body {
       margin: 0;
       font-family: 'Arial', sans-serif;

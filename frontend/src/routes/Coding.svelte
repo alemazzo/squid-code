@@ -31,31 +31,31 @@
                         alert("Congratulations! You passed the coding interview.");
                         let problem = await getLeetcodeInfo(id);
                         console.log("LeetCode Problem: ", problem);
-                        window.location.href = "/problem/" + problem["titleSlug"] + "/win"; // Redirect to the win page
+                        window.location.href = "/squid-code/problem/" + problem["titleSlug"] + "/win"; // Redirect to the win page
                     }
 
                     if (submission.status === "Wrong Answer") {
                         clearInterval(timerInterval);
                         alert("Wrong Answer! You failed the coding interview.");
-                        window.location.href = "/fail"; // Redirect to the fail page
+                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
                     }
 
                     if (submission.status === "Time Limit Exceeded") {
                         clearInterval(timerInterval);
                         alert("Time Limit Exceeded! You failed the coding interview.");
-                        window.location.href = "/fail"; // Redirect to the fail page
+                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
                     }
 
                     if (submission.status === "Runtime Error") {
                         clearInterval(timerInterval);
                         alert("Runtime Error! You failed the coding interview.");
-                        window.location.href = "/fail"; // Redirect to the fail page
+                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
                     }
 
                     if (submission.status === "Memory Limit Exceeded") {
                         clearInterval(timerInterval);
                         alert("Memory Limit Exceeded! You failed the coding interview.");
-                        window.location.href = "/fail"; // Redirect to the fail page
+                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
                     }
 
                     if (submission.status === "Compile Error") {
@@ -67,7 +67,7 @@
                     if (submission.status === "Unknown Error") {
                         clearInterval(timerInterval);
                         alert("Unknown Error! You failed the coding interview.");
-                        window.location.href = "/fail"; // Redirect to the fail page
+                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
                     }
 
                 }
@@ -75,7 +75,7 @@
         } else {
           clearInterval(timerInterval);
           alert("Time's up! You failed the coding interview.");
-            window.location.href = "/fail";
+            window.location.href = "/squid-code/fail";
         }
       }, 1000);
     };
