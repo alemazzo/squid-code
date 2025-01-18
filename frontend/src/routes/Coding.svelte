@@ -56,6 +56,7 @@
         }
       } else {
         clearInterval(timerInterval);
+        sendFailNotification();
         navigate(`/fail`);
       }
     }, 1000);
@@ -83,8 +84,8 @@
 
   // Function to send fail notification
   function sendFailNotification() {
-      new Notification("Time's up!", {
-          body: "You have failed to solve the problem. Better luck next time!",
+      new Notification("You have failed!", {
+          body: "Please try again",
       });
   }
 
