@@ -8,7 +8,7 @@
 
   // Initialize timer state
   const original_timeLeft = 10 * 60; // 10 minutes in seconds
-  const original_countdown = 10;
+  const original_countdown = 30;
 
   let interval;
   let modalVisible = true; // Control visibility of the modal
