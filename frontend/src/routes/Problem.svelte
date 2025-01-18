@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { getRandomLeetCodeQuestion, getLeetcodeInfo } from "../api/leetcode";
-    
+    import { navigate } from "svelte-routing";
     export let id;
   let problem = {};
   
@@ -24,7 +24,7 @@
       } else {
         clearInterval(interval); // Stop the timer when it reaches 0
         window.open("https://leetcode.com/problems/" + id, "_blank");
-        window.location.href = "/squid-code/problem/" + id + "/coding"; // Redirect to the coding page
+        navigate(`/squid-code/problem/${id}/coding`); // Redirect to the coding page
       }
     }, 1000);
   };
@@ -46,7 +46,7 @@
     // Open a new tab with the LeetCode problem link
     console.log("Problem: ", problem);
     window.open("https://leetcode.com/problems/" + id, "_blank");
-    window.location.href = "/squid-code/problem/" + id + "/coding"; // Redirect to the coding page
+    navigate(`/squid-code/problem/${id}/coding`); // Redirect to the coding page
   };
 
   </script>

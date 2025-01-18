@@ -1,7 +1,8 @@
 <script>
     import { onMount } from "svelte";
 	import { getLeetcodeInfo, getLeetCodeSubmission } from "../api/leetcode";
-    
+    import { navigate } from "svelte-routing";
+
     export let id;
 
     let timeLeft = 20 * 60; // 20 minutes in seconds
@@ -31,31 +32,31 @@
                         alert("Congratulations! You passed the coding interview.");
                         let problem = await getLeetcodeInfo(id);
                         console.log("LeetCode Problem: ", problem);
-                        window.location.href = "/squid-code/problem/" + problem["titleSlug"] + "/win"; // Redirect to the win page
+                        navigate(`/squid-code/problem/${problem["titleSlug"]}/win`);
                     }
 
                     if (submission.status === "Wrong Answer") {
                         clearInterval(timerInterval);
                         alert("Wrong Answer! You failed the coding interview.");
-                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
+                        navigate(`/squid-code/fail`);
                     }
 
                     if (submission.status === "Time Limit Exceeded") {
                         clearInterval(timerInterval);
                         alert("Time Limit Exceeded! You failed the coding interview.");
-                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
+                        navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.status === "Runtime Error") {
                         clearInterval(timerInterval);
                         alert("Runtime Error! You failed the coding interview.");
-                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
+                        navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.status === "Memory Limit Exceeded") {
                         clearInterval(timerInterval);
                         alert("Memory Limit Exceeded! You failed the coding interview.");
-                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
+                        navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                     if (submission.status === "Compile Error") {
@@ -67,7 +68,7 @@
                     if (submission.status === "Unknown Error") {
                         clearInterval(timerInterval);
                         alert("Unknown Error! You failed the coding interview.");
-                        window.location.href = "/squid-code/fail"; // Redirect to the fail page
+                        navigate(`/squid-code/fail`); // Redirect to the fail page
                     }
 
                 }
@@ -75,7 +76,7 @@
         } else {
           clearInterval(timerInterval);
           alert("Time's up! You failed the coding interview.");
-            window.location.href = "/squid-code/fail";
+            navigate(`/squid-code/fail`);
         }
       }, 1000);
     };

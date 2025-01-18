@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { getRandomLeetCodeQuestion } from "../api/leetcode";
+    import { navigate } from "svelte-routing";
   
     let username = "";
     let isUsernameValid = false;
@@ -16,7 +17,7 @@
       console.log(`Starting game with level: ${level}`);
       let problem = await getRandomLeetCodeQuestion(level);
         console.log("Random LeetCode Question: ", problem);
-        window.location.href = `/squid-code/problem/${problem["titleSlug"]}`;
+        navigate(`/squid-code/problem/${problem.id}`);
     }
   
     onMount(() => {
