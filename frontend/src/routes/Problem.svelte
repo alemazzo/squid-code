@@ -69,7 +69,9 @@
   };
 
   function sendNotification(seconds) {
-      new Notification(`${secondsToMinutes(seconds)} minutes remaining`);
+      new Notification("Brainstorm: " + problem.title, {
+          body: `${secondsToMinutes(seconds)} minutes remaining`,
+      });
   }
 
   function sendInitialNotification() {

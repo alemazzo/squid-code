@@ -72,7 +72,9 @@
 
   // Function to send notification
   function sendNotification(seconds) {
-      new Notification(`${secondsToMinutes(seconds)} minutes remaining`);
+      new Notification("Coding: " + problem.title, {
+          body: `${secondsToMinutes(seconds)} minutes remaining`,
+      });
   }
 
   // Function to send win notification
