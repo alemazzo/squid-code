@@ -1,19 +1,31 @@
 <script>
-    import { onMount } from "svelte";
-    import { getRandomLeetCodeQuestion, getLeetcodeInfo } from "../api/leetcode";
-    import { navigate } from "svelte-routing";
-    export let id;
+  import { onMount } from "svelte";
+  import { getLeetcodeInfo } from "../api/leetcode";
+  import { navigate } from "svelte-routing";
+
+  export let id;
   let problem = {};
-  
+
   // Initialize timer state
-  let timeLeft = 10 * 60; // 10 minutes in seconds
+  const original_timeLeft = 10 * 60; // 10 minutes in seconds
+  const original_countdown = 10;
+
   let interval;
+  let modalVisible = true; // Control visibility of the modal
+
+  let timeLeft = original_timeLeft;
+  let countdown = original_countdown; // Countdown for modal (10 seconds)
 
   // Function to format the time in mm:ss format
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
     return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const secondsToMinutes = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    return minutes;
   };
 
   // Countdown function that decrements the timer each second
@@ -29,12 +41,25 @@
     }, 1000);
   };
 
+  // Countdown for the modal before starting the main timer
+  const startCountdown = () => {
+    const countdownInterval = setInterval(() => {
+      if (countdown > 0) {
+        countdown -= 1;
+      } else {
+        clearInterval(countdownInterval);
+        modalVisible = false; // Hide the modal when countdown finishes
+        startTimer(); // Start the main timer
+      }
+    }, 1000);
+  };
+
   // Fetch the problem info when the component mounts
   onMount(async () => {
     try {
       problem = await getLeetcodeInfo(id);
       console.log("LeetCode Problem: ", problem);
-      startTimer(); // Start the timer once the problem is fetched
+      startCountdown(); // Start the countdown when problem is fetched
     } catch (error) {
       console.error("Error fetching problem: ", error);
     }
@@ -44,139 +69,154 @@
   const handleStartCoding = () => {
     console.log("Starting to code...");
     // Open a new tab with the LeetCode problem link
-    console.log("Problem: ", problem);
     window.open("https://leetcode.com/problems/" + id, "_blank");
     navigate(`/squid-code/problem/${id}/coding`); // Redirect to the coding page
   };
 
-  </script>
+</script>
+
 <style>
-
-    /* Custom Scrollbar for Webkit Browsers (Chrome, Safari, etc.) */
-::-webkit-scrollbar {
-  width: 8px; /* Set the width of the scrollbar */
-  height: 8px; /* For horizontal scrollbar */
+  /* Modal Container */
+/* Modal Container */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  z-index: 999;
 }
 
-::-webkit-scrollbar-track {
-  background: #333; /* Track (background) color */
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #f39c12; /* Thumb (scrollbar) color */
-  border-radius: 10px;
-  border: 3px solid #333; /* Border around the scrollbar */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #ff6347; /* Change color on hover */
-}
-
-/* Custom Scrollbar for Firefox */
-html {
-  scrollbar-width: thin; /* Thin scrollbar */
-  scrollbar-color: #f39c12 #333; /* Thumb and Track color */
-} 
-
-    body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      background-color: #1e1e1e;
-      color: white;
-      overflow-x: hidden; /* Prevent horizontal overflow */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-  
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      box-sizing: border-box;
-      overflow: hidden; /* Ensure no overflow horizontally */
-    }
-  
-    .problem-section {
+/* Modal Content Styling */
+.modal-content {
   background: #222;
   padding: 40px 60px;
-  width: 100%;
-  margin-right: 250px;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
-  overflow-y: auto;
-  height: auto;
-  max-height: 90vh;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  white-space: normal;
-}
-  
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      font-weight: 600;
-      word-wrap: break-word; /* Break long words */
-      overflow-wrap: break-word; /* Prevents horizontal overflow */
-    }
-  
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      line-height: 1.6;
-      word-wrap: break-word; /* Wrap text if it overflows */
-      overflow-wrap: break-word; /* Prevent horizontal overflow */
-      word-break: break-word; /* Break long words */
-    }
-  
-    .description, .content {
-      margin-top: 20px;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      word-wrap: break-word; /* Wrap text within the container */
-      overflow-wrap: break-word; /* Prevent horizontal overflow */
-      word-break: break-word; /* Prevent words from overflowing */
-      white-space: normal; /* Allow white space between paragraphs */
-    }
-  
-    .description {
-      max-height: 70vh;
-      overflow-y: auto; /* Scrollable if content overflows */
-    }
-  
-    .content {
-      margin-top: 30px;
-    }
-  
-    img {
-      max-width: 100%; /* Prevent images from overflowing */
-      height: auto;
-    }
-
-      /* Timer and Message */
-      .timer-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #333;
-  padding: 15px 25px;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-  width: 200px;
-  font-size: 3rem; /* Increase the font size here */
-  color: #f39c12;
-  font-weight: bold; /* Optional: make the timer text bold */
-    text-align: center;
-    align-items: center;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+  text-align: center;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 1500px;
+  height: auto;
 }
+
+/* Countdown styling */
+.modal .countdown {
+  font-size: 4rem;
+  color: #f39c12;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+/* Info Text Styling */
+.modal .info {
+  font-size: 1rem;
+  color: #f39c12;
+  margin-top: 20px;
+  font-weight: normal;
+}
+
+/* GIF Styling */
+.modal .gif {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  display: block;
+  /* Centering the GIF if you need additional control over its position */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Container for the main content */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+}
+
+
+  /* Problem Section */
+  .problem-section {
+    background: #222;
+    padding: 40px 60px;
+    width: 100%;
+    margin-right: 250px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+    overflow-y: auto;
+    height: auto;
+    max-height: 90vh;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .description, .content {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+
+  .description {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .content {
+    margin-top: 30px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Timer and Message */
+  .timer-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+    width: 200px;
+    font-size: 3rem;
+    color: #f39c12;
+    font-weight: bold;
+    text-align: center;
+  }
 
   /* Start Coding Button */
   .start-button {
     position: fixed;
-    top: 130px; /* Positioned below the timer */
+    top: 130px;
     right: 20px;
     background-color: #f39c12;
     color: #1e1e1e;
@@ -188,28 +228,56 @@ html {
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: 200px; /* Make button the same width as the timer */
-    text-align: center;
+    width: 200px;
   }
 
   .start-button:hover {
     background-color: #ff6347;
   }
 
-  </style>
-  
-  <div class="container">
+  /* Animation for the gif */
+</style>
+
+<div class="container">
+  <!-- Modal -->
+  {#if modalVisible}
+    <div class="modal">
+      <div class="modal-content">
+        <p>Get ready! You have {original_countdown} seconds to prepare your interview.</p>
+        <img class="gif" src="https://media.giphy.com/media/pDgHg2Lcju3Ty/giphy.gif?cid=790b7611noyctyssiy1q495shqesx6tr1sa0jx2k1prtvzno&ep=v1_gifs_search&rid=giphy.gif&ct=g" alt="Trolling GIF" />
+        <p class="countdown">Time left: {countdown}</p>
+        
+        <p class="info">
+          You will now have {secondsToMinutes(original_timeLeft)} minutes to analyze the problem and brainstorm a solution (no coding yet).
+        </p>
+        <p class="info">
+          Once the time is over, or you choose to start coding, the LeetCode problem will open. 
+          Make sure your account is the same as the one entered here.
+        </p>
+        <p class="info">
+          A timer of 20 minutes will start for you to solve the problem waiting for a submission to be found.
+        </p>
+        
+      </div>
+    </div>
+  {/if}
+
+  <!-- Problem Content -->
+  {#if !modalVisible}
     <div class="problem-section">
       <h1>{problem.title}</h1>
-      <div class="description">{@html problem.description}</div>
-      <div class="content">{@html problem.content}</div>
+      <div class="description" >{@html problem.description}</div>
+      <div class="content" >{@html problem.content}</div>
     </div>
+  {/if}
 
-    <div class="timer-container">
-        {formatTime(timeLeft)}
-    </div>
-    <!-- Start Coding Button -->
-    <button class="start-button" on:click={handleStartCoding}>
+  <!-- Timer -->
+  <div class="timer-container">
+    {formatTime(timeLeft)}
+  </div>
+
+  <!-- Start Coding Button -->
+  <button class="start-button" on:click={handleStartCoding}>
     Code
   </button>
-  </div>
+</div>
