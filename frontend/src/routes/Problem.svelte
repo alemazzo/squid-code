@@ -38,6 +38,9 @@
     interval = setInterval(() => {
       if (timeLeft > 0) {
         timeLeft -= 1;
+        if (timeLeft % 60 === 0) {
+          sendNotification(timeLeft);
+        }
       } else {
         clearInterval(interval); // Stop the timer when it reaches 0
         window.open("https://leetcode.com/problems/" + id, "_blank");
@@ -63,6 +66,10 @@
     modalVisible = false; // Hide the modal immediately
     startTimer(); // Start the main timer
   };
+
+  function sendNotification(seconds) {
+      new Notification(`${secondsToMinutes(seconds)} minutes remaining`);
+  }
 
   onMount(async () => {
     try {
