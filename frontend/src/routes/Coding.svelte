@@ -65,8 +65,8 @@
 
   // Function to send initial notification
   function sendInitialNotification() {
-      new Notification("Coding interview started", {
-          body: "You have " + secondsToMinutes(timeLeft) + " minutes to solve the problem",
+      new Notification("Coding time started", {
+          body: "You have " + secondsToMinutes(timeLeft) + " minutes to code the solution",
       });
   }
 

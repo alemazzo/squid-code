@@ -35,6 +35,7 @@
   };
 
   const startTimer = async () => {
+    sendInitialNotification();
     const interval = setInterval(() => {
       if (timeLeft > 0) {
         timeLeft -= 1;
@@ -71,6 +72,12 @@
       new Notification(`${secondsToMinutes(seconds)} minutes remaining`);
   }
 
+  function sendInitialNotification() {
+      new Notification("Brainstorming time started", {
+          body: "You have " + secondsToMinutes(timeLeft) + " minutes to think about the problem",
+      });
+  }
+
   onMount(async () => {
     try {
       problem = await getLeetcodeInfo(id);
@@ -87,7 +94,7 @@
         timeLeft = original_timeLeft;
         timeForCode = 45 * 60; // 
       }
-      console.log("LeetCode Problem: ", problem);
+      console.log("LeetCode Problem: ", problem); // Send initial notification
       startCountdown(); // Start the countdown when problem is fetched
     } catch (error) {
       console.error("Error fetching problem: ", error);
@@ -152,7 +159,7 @@
 }
 
 .time-info .info {
-  font-size: 1.4rem;
+  font-size: 2rem;
   margin-bottom: 15px;
   color: #f39c12;
 }
@@ -308,16 +315,23 @@ p {
         
         <!-- Updated Info Styling for Brainstorming and Coding Time -->
         <div class="time-info">
-          <p class="info brainstorming">
-            <span class="time-label">Brainstorming time:</span>
-            <span class="time-value">{secondsToMinutes(original_timeLeft)} minutes</span>
+          <p class="info">
+            <span >Brainstorming time:</span>
+            <span >{secondsToMinutes(original_timeLeft)} minutes</span>
           </p>
-          <p class="info coding">
-            <span class="time-label">Coding time:</span>
-            <span class="time-value">{secondsToMinutes(timeForCode)} minutes</span>
+          <p class="info">
+            <span >Coding time:</span>
+            <span >{secondsToMinutes(timeForCode)} minutes</span>
           </p>
+          
         </div>
-
+        <p class="">
+          Use your brainstorming time wisely! 🧠
+          <br />
+          This time is for you to think about the problem and come up with a plan.
+          It will end when the countdown finishes or when you press the Code button.
+          Don't waste it! 🚀
+        </p>
         <!-- Skip button with Icon -->
         <button class="skip-button" on:click={skipCountdown}>
           Start Interview
