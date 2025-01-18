@@ -16,7 +16,7 @@
       console.log(`Starting game with level: ${level}`);
       getRandomLeetCodeQuestion(level).then((question) => {
         console.log("Random LeetCode Question:");
-        window.location.href = `/problem/${question.id}`;
+        window.location.href = `/problem/${question["titleSlug"]}`;
       });
     }
   
