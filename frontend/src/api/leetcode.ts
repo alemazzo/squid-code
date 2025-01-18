@@ -1,5 +1,5 @@
 const baseUrl = 'https://leetcode.com';
-const endpoint = "http://localhost:3000/leetcode/";
+const endpoint = "https://squid-code.onrender.com/leetcode/";
 
 export async function getRandomLeetCodeQuestion(difficulty) {
     const url = "https://leetcode.com/graphql";
