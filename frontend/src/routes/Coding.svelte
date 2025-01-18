@@ -17,10 +17,9 @@
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const secondsToMinutesAndSeconds = (time) => {
+  const secondsToMinutes = (time) => {
     const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes} minutes and ${seconds} seconds`;
+    return minutes;
   };
 
   async function checkSubmission(timer) {
@@ -46,13 +45,13 @@
   const startTimer = () => {
     timerInterval = setInterval(async () => {
       if (timeLeft > 0) {
-        timeLeft--;
-        if (timeLeft % 10 === 0) {
+        if (timeLeft % 60 === 0) {
           sendNotification(timeLeft);
         }
         if (timeLeft % 10 === 0) {
           checkSubmission(timerInterval);
         }
+        timeLeft--;
       } else {
         clearInterval(timerInterval);
         submissionStatus = "failed";
@@ -65,10 +64,7 @@
 
   // Function to send notification
   function sendNotification(seconds) {
-      new Notification(`Timer Update: ${secondsToMinutesAndSeconds(seconds)} remaining`, {
-          body: "Keep going! You're almost there!",
-          icon: "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png",
-      });
+      new Notification(`${secondsToMinutes(seconds)} remaining`);
   }
 
   // Start the timer immediately when the component is mounted
