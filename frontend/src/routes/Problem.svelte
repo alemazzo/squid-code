@@ -6,17 +6,14 @@
   export let id;
   let problem = {};
 
-  // Initialize timer state
   const original_timeLeft = 10 * 60; // 10 minutes in seconds
-  const original_countdown = 30;
+  const original_countdown = 30; // 30 seconds for countdown
 
   let interval;
   let modalVisible = true; // Control visibility of the modal
-
   let timeLeft = original_timeLeft;
-  let countdown = original_countdown; // Countdown for modal (10 seconds)
+  let countdown = original_countdown; // Countdown for modal (30 seconds)
 
-  // Function to format the time in mm:ss format
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
@@ -24,22 +21,17 @@
   };
 
   const secondsToMinutes = (timeInSeconds) => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    return minutes;
+    return Math.floor(timeInSeconds / 60);
   };
 
   const secondsToMinutesSeconds = (timeInSeconds) => {
     let minutes = Math.floor(timeInSeconds / 60);
-    if (minutes < 10) {
-      minutes = `0${minutes}`;
-    }
     let seconds = timeInSeconds % 60;
-    if (seconds < 10) {
-      seconds = `0${seconds}`;
-    }
+    if (minutes < 10) minutes = `0${minutes}`;
+    if (seconds < 10) seconds = `0${seconds}`;
     return `${minutes}:${seconds}`;
   };
-  // Countdown function that decrements the timer each second
+
   const startTimer = () => {
     interval = setInterval(() => {
       if (timeLeft > 0) {
@@ -52,7 +44,6 @@
     }, 1000);
   };
 
-  // Countdown for the modal before starting the main timer
   const startCountdown = () => {
     const countdownInterval = setInterval(() => {
       if (countdown > 0) {
@@ -65,7 +56,12 @@
     }, 1000);
   };
 
-  // Fetch the problem info when the component mounts
+  const skipCountdown = () => {
+    clearInterval(countdown); // Stop the countdown
+    modalVisible = false; // Hide the modal immediately
+    startTimer(); // Start the main timer
+  };
+
   onMount(async () => {
     try {
       problem = await getLeetcodeInfo(id);
@@ -76,15 +72,13 @@
     }
   });
 
-  // Function to handle button click (optional)
   const handleStartCoding = () => {
     console.log("Starting to code...");
-    // Open a new tab with the LeetCode problem link
     window.open("https://leetcode.com/problems/" + id, "_blank");
     navigate(`/squid-code/problem/${id}/coding`); // Redirect to the coding page
   };
-
 </script>
+
 
 <style>
   /* Modal Container */
@@ -246,6 +240,37 @@
     background-color: #ff6347;
   }
 
+  /* Skip Button */
+.skip-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* Adds space between the icon and text */
+  width: 200px; /* Makes the button wider */
+}
+
+/* Hover Effect */
+.skip-button:hover {
+  background-color: #c0392b;
+}
+
+/* FontAwesome Icon */
+.skip-button i {
+  font-size: 1.5rem; /* Adjust the size of the icon */
+}
+
+
   /* Animation for the gif */
 </style>
 
@@ -268,6 +293,11 @@
         <p class="info">
           A timer of 20 minutes will start for you to solve the problem waiting for a submission to be found.
         </p>
+
+        <!-- Skip button with Icon -->
+        <button class="skip-button" on:click={skipCountdown}>
+          Start Round
+        </button>
         
       </div>
     </div>
