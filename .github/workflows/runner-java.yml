@@ -1,15 +1,17 @@
 name: runner-java
+
 on:
   push:
     branches:
       - '*'
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
     paths:
       - 'squidcode-runners/java/**'
   pull_request:
     branches:
       - '*'
+    paths:
+      - 'squidcode-runners/java/**'
+
 jobs:
   build:
     name: Build & push docker image
@@ -19,10 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Debug
-        run: |
-          echo "github.ref -> {{ github.ref }}"
  
       - name: Docker metadata
         id: metadata
@@ -32,7 +30,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=raw,value={{sha}},enable=${{ github.ref_type != 'tag' }}
+            type=raw,value={{sha}},enable=true
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
