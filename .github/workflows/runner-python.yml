@@ -24,7 +24,7 @@ jobs:
  
       - name: Docker metadata
         id: metadata
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMG_NAME }}
           # Include "latest" along with your computed tags.
