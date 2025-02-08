@@ -52,6 +52,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           context: squidcode-runners/java
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
