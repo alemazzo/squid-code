@@ -11,5 +11,6 @@ USER coderunner
 # Copy the runner script (we'll write a simple one)
 COPY run.py .
 
+
 # Set the entrypoint: The runner script will receive test input as an argument (or via STDIN)
 ENTRYPOINT ["python", "run.py"]

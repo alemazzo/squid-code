@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - '*'
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
     paths:
       - 'squidcode-runners/python/**'
   pull_request:
