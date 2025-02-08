@@ -25,7 +25,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 	compileOnly("io.micronaut:micronaut-http-client")
-	runtimeOnly("ch.qos.logback:logback-classic")
 	runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 	testImplementation("io.micronaut:micronaut-http-client")
 	runtimeOnly("org.yaml:snakeyaml")
@@ -54,7 +53,6 @@ application {
 java {
 	sourceCompatibility = JavaVersion.toVersion("21")
 }
-
 
 graalvmNative.toolchainDetection.set(false)
 micronaut {
@@ -89,11 +87,16 @@ tasks.named<DockerBuildImage>("dockerBuild") {
 	images.set(listOf(dockerImage))
 }
 
+tasks.named<DockerBuildImage>("dockerBuildNative") {
+	images.set(listOf(dockerImage))
+}
+
 tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
 	baseImage("eclipse-temurin:21-jre-jammy")
 }
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
+	baseImage("gcr.io/distroless/cc-debian10")
 	jdkVersion.set("21")
 }
 

@@ -1,5 +1,4 @@
 import express, { json } from "express";
-import fetch from "node-fetch";
 import cors from "cors"; // Import cors middleware
 import { LeetCode } from 'leetcode-query';
 
