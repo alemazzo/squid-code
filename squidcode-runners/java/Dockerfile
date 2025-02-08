@@ -14,6 +14,5 @@ RUN chmod +x run.sh
 # Change to non-root user
 USER coderunner
 
-
 # Set the entrypoint
 ENTRYPOINT ["./run.sh"]

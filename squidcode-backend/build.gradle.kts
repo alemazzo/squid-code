@@ -1,3 +1,5 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
 plugins {
 	id("org.jetbrains.kotlin.jvm") version "1.9.22"
 	id("org.jetbrains.kotlin.plugin.allopen") version "1.9.22"
@@ -73,6 +75,18 @@ micronaut {
 		deduceEnvironment.set(true)
 		optimizeNetty.set(true)
 	}
+}
+
+val dockerImage = "alessandromazzoli/squidcode-backend:latest"
+docker {
+	registryCredentials {
+		username = System.getenv("DOCKER_USERNAME")
+		password = System.getenv("DOCKER_PASSWORD")
+	}
+}
+
+tasks.named<DockerBuildImage>("dockerBuild") {
+	images.set(listOf(dockerImage))
 }
 
 tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {

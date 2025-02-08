@@ -1,6 +1,5 @@
 package io.github.alemazzo.squidcode.backend.submission.application
 
-import io.github.alemazzo.squidcode.backend.evaluation.infrastructure.EvaluationQueue
 import io.github.alemazzo.squidcode.backend.submission.domain.Submission
 import io.github.alemazzo.squidcode.backend.submission.domain.SubmissionRepository
 import io.github.alemazzo.squidcode.backend.submission.domain.SubmissionStatus
@@ -11,7 +10,6 @@ import java.util.*
 @Singleton
 class SubmissionService(
 	private val repository: SubmissionRepository,
-	private val evaluationQueue: EvaluationQueue,
 ) {
 
 	fun submitSolution(request: SubmissionRequest): String {
@@ -23,7 +21,6 @@ class SubmissionService(
 			status = SubmissionStatus.QUEUED
 		)
 		repository.save(submission)
-		evaluationQueue.enqueue(submission)
 		return submission.id
 	}
 
