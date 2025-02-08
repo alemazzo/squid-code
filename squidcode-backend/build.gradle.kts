@@ -76,28 +76,11 @@ micronaut {
 	}
 }
 
-val dockerImage = "alessandromazzoli/squidcode-backend:latest"
-docker {
-	registryCredentials {
-		username = System.getenv("DOCKER_USERNAME")
-		password = System.getenv("DOCKER_PASSWORD")
-	}
-}
-
-tasks.named<DockerBuildImage>("dockerBuild") {
-	images.set(listOf(dockerImage))
-}
-
-tasks.named<DockerBuildImage>("dockerBuildNative") {
-	images.set(listOf(dockerImage))
-}
-
 tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
 	baseImage("eclipse-temurin:21-jre-jammy")
 }
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
-	baseImage("gcr.io/distroless/cc-debian10")
 	jdkVersion.set("21")
 }
 
