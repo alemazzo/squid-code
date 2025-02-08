@@ -16,6 +16,6 @@
     "isolatedModules": true,
     "moduleDetection": "force"
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
+  "include": ["../squidcode-frontend/src/**/*.ts", "../squidcode-frontend/src/**/*.js", "../squidcode-frontend/src/**/*.svelte"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
