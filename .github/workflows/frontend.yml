@@ -8,9 +8,6 @@ on:
   push:
     paths:
       - 'squidcode-frontend/**'
-  pull_request:
-    paths:
-      - 'squidcode-frontend/**'
 
 jobs:
   build-and-deploy:

@@ -2,13 +2,6 @@ name: runner-java
 
 on:
   push:
-    branches:
-      - '*'
-    paths:
-      - 'squidcode-runners/java/**'
-  pull_request:
-    branches:
-      - '*'
     paths:
       - 'squidcode-runners/java/**'
 

@@ -2,13 +2,6 @@ name: runner-python
 
 on:
   push:
-    branches:
-      - '*'
-    paths:
-      - 'squidcode-runners/python/**'
-  pull_request:
-    branches:
-      - '*'
     paths:
       - 'squidcode-runners/python/**'
 
