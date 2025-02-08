@@ -1,0 +1,73 @@
+name: backend
+env:
+  # Environment variables
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  # Commands
+  build: ./gradlew build
+  test: ./gradlew test
+  deploy: ./gradlew dockerPush
+
+on:
+  push:
+    paths:
+      - squidcode-backend/**
+  pull_request:
+    paths:
+      - squidcode-backend/**
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build
+        working-directory: squidcode-backend
+        run: '${{ env.build }}'
+
+      - name: Test
+        working-directory: squidcode-backend
+        run: '${{ env.test }}'
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: >-
+      success() &&
+      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main'
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Deploy
+        working-directory: squidcode-backend
+        run: '${{ env.deploy }}'
