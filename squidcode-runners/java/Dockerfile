@@ -4,13 +4,15 @@ FROM openjdk:17-slim
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' coderunner
 
-# Set working directory and change to non-root user
+# Set working directory
 WORKDIR /home/coderunner/app
-USER coderunner
 
-# Copy the runner script (we’ll write a simple shell script that compiles and runs)
+# Copy the runner script and change permissions
 COPY run.sh .
 RUN chmod +x run.sh
+
+# Change to non-root user
+USER coderunner
 
 # Set the entrypoint
 ENTRYPOINT ["./run.sh"]
