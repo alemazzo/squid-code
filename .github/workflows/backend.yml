@@ -84,20 +84,11 @@ jobs:
           ./gradlew buildNativeLayersTask
           ./gradlew dockerPrepareContext
 
-      - name: Build and Push Docker Image amd64
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
           context: ./squidcode-backend/build/docker/native-main
           file: ./squidcode-backend/build/docker/native-main/DockerfileNative
           platforms: linux/amd64
-          push: true
-          tags: alessandromazzoli/squidcode-backend:latest
-
-      - name: Build and Push Docker Image arm64
-        uses: docker/build-push-action@v4
-        with:
-          context: ./squidcode-backend/build/docker/native-main
-          file: ./squidcode-backend/build/docker/native-main/DockerfileNative
-          platforms: linux/arm64
           push: true
           tags: alessandromazzoli/squidcode-backend:latest
