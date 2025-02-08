@@ -80,12 +80,29 @@ jobs:
       - name: Prepare Dockerfile & Context
         working-directory: squidcode-backend
         run: |
+          ./gradlew dockerfile
+          ./gradlew buildLayers
+          
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./squidcode-backend/build/docker/main
+          file: ./squidcode-backend/build/docker/main/Dockerfile
+          platforms: linux/amd64, linux/arm64
+          push: true
+          tags: alessandromazzoli/squidcode-backend:latest
+
+      - name: Prepare Dockerfile & Context (Native)
+        working-directory: squidcode-backend
+        if: false
+        run: |
           ./gradlew dockerfileNative
           ./gradlew buildNativeLayersTask
           ./gradlew dockerPrepareContext
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image (Native)
         uses: docker/build-push-action@v4
+        if: false
         with:
           context: ./squidcode-backend/build/docker/native-main
           file: ./squidcode-backend/build/docker/native-main/DockerfileNative
