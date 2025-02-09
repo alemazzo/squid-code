@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squidcode-frontend
+  labels:
+    app: squidcode-frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: squidcode-frontend
+  template:
+    metadata:
+      labels:
+        app: squidcode-frontend
+    spec:
+      containers:
+        - name: squidcode-backend
+          image: registry.digitalocean.com/alessandromazzoli/squidcode-frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
