@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squidcode-backend
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: squidcode-backend
+  template:
+    metadata:
+      labels:
+        app: squidcode-backend
+    spec:
+      containers:
+        - name: squidcode-backend
+          image: registry.digitalocean.com/alessandromazzoli/squidcode-backend:latest
+          ports:
+            - containerPort: 8080
