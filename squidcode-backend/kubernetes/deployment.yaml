@@ -21,4 +21,4 @@ spec:
         - name: squidcode-backend
           image: registry.digitalocean.com/alessandromazzoli/squidcode-backend:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8000

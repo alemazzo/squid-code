@@ -3,12 +3,14 @@ kind: Ingress
 metadata:
   name: squidcode-ingress
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - squidcode.xyz
-      secretName: your-tls-secret
+      secretName: example-tls
   rules:
     - host: squidcode.xyz
       http:
