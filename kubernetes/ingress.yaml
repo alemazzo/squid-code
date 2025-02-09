@@ -4,12 +4,13 @@ metadata:
   name: squidcode-ingress
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - squidcode.xyz
+        - api.squidcode.xyz
       secretName: example-tls
   rules:
     - host: squidcode.xyz
@@ -22,8 +23,11 @@ spec:
                 name: squidcode-frontend-service
                 port:
                   number: 80
-          - path: /api/(.*)
-            pathType: ImplementationSpecific
+    - host: api.squidcode.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: squidcode-backend-service
