@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: squidcode-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+    - hosts:
+        - squidcode.xyz
+      secretName: your-tls-secret
+  rules:
+    - host: squidcode.xyz
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: squidcode-backend-service
+                port:
+                  number: 80
