@@ -6,7 +6,7 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 
-@Controller("/api/problems")
+@Controller("/problems")
 class ProblemController(private val problemService: ProblemService) {
 
 	@Get("/")
