@@ -1,7 +1,7 @@
 import { authStore } from "../stores/authStore";
 import { navigate } from "svelte-routing";
 
-const baseUrl = 'http://localhost:8000'; 
+const baseUrl = 'https://api.squidcode.com';
 
 // On load, check if in the localStorage there is a JWT
 export function initAuth(): void {

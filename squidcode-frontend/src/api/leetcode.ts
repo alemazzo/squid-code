@@ -1,5 +1,5 @@
 const baseUrl = 'https://leetcode.com';
-const endpoint = "https://squid-code.onrender.com/leetcode/";
+const endpoint = "https://leetcode.squidcode.xyz/";
 
 
 export async function getLeetcodeInfo(id: String) {

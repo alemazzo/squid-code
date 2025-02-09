@@ -11,6 +11,7 @@ spec:
     - hosts:
         - squidcode.xyz
         - api.squidcode.xyz
+        - leetcode.squidcode.xyz
       secretName: example-tls
   rules:
     - host: squidcode.xyz
