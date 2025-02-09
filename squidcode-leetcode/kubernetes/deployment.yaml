@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squidcode-leetcode-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: squidcode-leetcode
+  template:
+    metadata:
+      labels:
+        app: squidcode-leetcode
+    spec:
+      containers:
+        - name: squidcode-leetcode
+          image: registry.digitalocean.com/alessandromazzoli/squidcode-leetcode:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"

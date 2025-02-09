@@ -33,3 +33,13 @@ spec:
                 name: squidcode-backend-service
                 port:
                   number: 80
+    - host: leetcode.squidcode.xyz
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: squidcode-leetcode-service
+              port:
+                number: 80
