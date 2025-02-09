@@ -10,3 +10,10 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8000
+  resource:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
