@@ -1,5 +1,5 @@
 # Use an official minimal Python runtime
-FROM python:3.10-slim
+FROM python:3.13-slim
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' coderunner
