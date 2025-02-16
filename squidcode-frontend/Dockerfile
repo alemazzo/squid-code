@@ -1,5 +1,5 @@
 # Step 1: Use a node image to build the app (if using a JS framework like React or Vue)
-FROM node:18 AS build
+FROM node:22 AS build
 
 # Set working directory inside the container
 WORKDIR /app
