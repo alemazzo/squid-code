@@ -81,7 +81,7 @@ jobs:
           ./gradlew buildLayers
           
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./squidcode-backend/build/docker/main
           file: ./squidcode-backend/build/docker/main/Dockerfile
@@ -98,7 +98,7 @@ jobs:
           ./gradlew dockerPrepareContext
 
       - name: Build and Push Docker Image (Native)
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         if: false
         with:
           context: ./squidcode-backend/build/docker/native-main
