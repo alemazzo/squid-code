@@ -7,6 +7,7 @@ on:
   push:
     paths:
       - 'squidcode-leetcode/**'
+      - '.github/workflows/leetcode.yml'
 
 jobs:
   build:

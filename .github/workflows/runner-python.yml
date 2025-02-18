@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'squidcode-runners/python/**'
+      - '.github/workflows/runner-python.yml'
 
 jobs:
   build:
