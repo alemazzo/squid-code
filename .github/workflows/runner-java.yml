@@ -2,6 +2,7 @@ name: runner-java
 
 env:
   path: services/squidcode-runners/java
+  registry: registry.digitalocean.com
   image: alessandromazzoli/squidcode-runner-java
   platforms: linux/amd64,linux/arm64
 
@@ -38,4 +39,4 @@ jobs:
           context: ${{ env.path }}
           platforms: ${{ env.platforms }}
           push: true
-          tags: ${{ env.image }}:latest
+          tags: ${{ env.registry }}/${{ env.image }}:latest

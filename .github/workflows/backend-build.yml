@@ -1,0 +1,39 @@
+name: squidcode-backend@build
+
+on:
+  push:
+    paths:
+      - services/squidcode-backend/application/**
+  pull_request:
+    paths:
+      - services/squidcode-backend/application/**
+
+env:
+  path: services/squidcode-backend/application
+  build: ./gradlew build
+  test: ./gradlew test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build
+        working-directory: ${{ env.path }}
+        run: '${{ env.build }}'
+
+      - name: Test
+        working-directory: ${{ env.path }}
+        run: '${{ env.test }}'

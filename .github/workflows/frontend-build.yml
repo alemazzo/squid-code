@@ -1,0 +1,31 @@
+name: squidcode-frontend@build
+env:
+  install: npm install
+  build: npm run build
+  path: services/squidcode-frontend/application
+
+on:
+  push:
+    paths:
+      - services/squidcode-frontend/application/**
+  pull_request:
+    paths:
+      - services/squidcode-frontend/application/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies and build
+        working-directory: ${{ env.path }}
+        run: |
+          ${{ env.install }}
+          ${{ env.build }}

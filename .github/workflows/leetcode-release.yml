@@ -1,0 +1,60 @@
+name: squidcode-leetcode@release
+
+on:
+  workflow_run:
+    workflows: ["squidcode-leetcode@build"]
+    types:
+      - completed
+
+env:
+  install: npm install
+  build: npm run build
+  path: services/squidcode-leetcode/application
+  registry: registry.digitalocean.com
+  image: alessandromazzoli/squidcode-leetcode
+  platforms: linux/amd64
+        
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 
+
+      - name: Install dependencies and build
+        working-directory: ${{ env.path }}
+        run: |
+          ${{ env.install }}
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+  
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+      
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ env.path }}
+          file: ${{ env.path }}/Dockerfile
+          platforms: ${{ env.platforms }}
+          push: true
+          tags: ${{ env.registry }}/${{ env.image }}:latest

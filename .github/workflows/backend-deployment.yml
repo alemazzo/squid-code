@@ -1,17 +1,21 @@
-name: kubernetes
-env:
-  path: infrastructure/kubernetes
+name: squidcode-backend@deployment
 
 on:
-  push:
-    paths:
-      - infrastructure/kubernetes/**
-    branches:
-      - main
+  workflow_run:
+    workflows: ["squidcode-backend@release"]
+    types:
+      - completed
+
+env:
+  path: services/squidcode-backend/infrastructure/kubernetes
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
 
     steps:
       - name: Checkout Code
