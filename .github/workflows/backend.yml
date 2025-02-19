@@ -9,7 +9,6 @@ on:
   push:
     paths:
       - squidcode-backend/**
-      - .github/workflows/backend.yml
 
 jobs:
 
