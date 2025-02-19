@@ -1,138 +1,135 @@
-name: backend
-env:
-  # Commands
-  build: ./gradlew build
-  test: ./gradlew test
-  deploy: ./gradlew dockerPushNative
-  path: services/squidcode-backend
-  image: alessandromazzoli/squidcode-backend
-  platforms: linux/amd64
+name: backend-service
 
 on:
   push:
     paths:
-      - services/squidcode-backend/**
+      - services/backend-service/application/**
+  pull_request:
+    paths:
+      - services/backend-service/application/**
+
+env:
+  applicationPath: services/backend-service/application
+  build: ./gradlew build
+  test: ./gradlew test
+  registry: registry.digitalocean.com
+  image: alessandromazzoli/squidcode-backend
+  platforms: linux/amd64
+  kubernetesPath: services/backend-service/infrastructure/kubernetes
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-
     steps:
 
-      - name: Checkout Code
+      - name: checkout
         uses: actions/checkout@v2
 
-      - name: Setup Java
+      - name: setup-java
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '21'
 
-      - name: Setup Gradle
+      - name: setup-gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build
-        working-directory: ${{ env.path }}
+      - name: build
+        working-directory: ${{ env.applicationPath }}
         run: '${{ env.build }}'
 
-      - name: Test
-        working-directory: ${{ env.path }}
+      - name: test
+        working-directory: ${{ env.applicationPath }}
         run: '${{ env.test }}'
 
   release:
     runs-on: ubuntu-latest
     needs: build
     if: >-
-      success() &&
-      github.event_name == 'push' && 
+      github.event_name == 'push' &&
       github.ref == 'refs/heads/main'
 
     steps:
-
-      - name: Checkout Code
+      - name: checkout
         uses: actions/checkout@v2
 
-      - name: Setup Java
+      - name: setup-java
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: '21'
 
-      - name: Setup Gradle
+      - name: setup-gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Set up QEMU
+      - name: setup-qemu
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up Docker Buildx
+      - name: setup-buildx
         uses: docker/setup-buildx-action@v2
       
-      
-      - name: Install doctl
+      - name: setup-doct
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      - name: setup-doct-registry
         run: doctl registry login --expiry-seconds 1200
 
-      - name: Prepare Dockerfile & Context
-        working-directory: ${{ env.path }}
+      - name: setup-docker
+        working-directory: ${{ env.applicationPath }}
         run: |
           ./gradlew dockerfile
           ./gradlew buildLayers
           
-      - name: Build and Push Docker Image
+      - name: build-and-push
         uses: docker/build-push-action@v4
         with:
-          context: ${{ env.path }}/build/docker/main
-          file: ${{ env.path }}/build/docker/main/Dockerfile
+          context: ${{ env.applicationPath }}/build/docker/main
+          file: ${{ env.applicationPath }}/build/docker/main/Dockerfile
           platforms: ${{ env.platforms }}
           push: true
-          tags: ${{ env.image }}:latest
+          tags: ${{ env.registry }}/${{ env.image }}:latest
 
-      - name: Prepare Dockerfile & Context (Native)
-        working-directory: ${{ env.path }}
+      - name: setup-docker-native
+        working-directory: ${{ env.applicationPath }}
         if: false
         run: |
           ./gradlew dockerfileNative
           ./gradlew buildNativeLayersTask
           ./gradlew dockerPrepareContext
 
-      - name: Build and Push Docker Image (Native)
+      - name: build-and-push-native
         uses: docker/build-push-action@v4
         if: false
         with:
-          context: ${{ env.path }}/build/docker/native-main
-          file: ${{ env.path }}/build/docker/native-main/DockerfileNative
+          context: ${{ env.applicationPath }}/build/docker/native-main
+          file: ${{ env.applicationPath }}/build/docker/native-main/DockerfileNative
           platforms: ${{ env.platforms }}
           push: true
-          tags: ${{ env.image }}:latest
-      
+          tags: ${{ env.registry }}/${{ env.image }}:latest
+
   deploy:
     runs-on: ubuntu-latest
     needs: release
     if: >-
-      success() &&
-      github.event_name == 'push' && 
+      github.event_name == 'push' &&
       github.ref == 'refs/heads/main'
-    
+
     steps:
-    
-      - name: Checkout Code
+      - name: checkout
         uses: actions/checkout@v2
 
-      - name: Install doctl
+      - name: setup-doct
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
+      - name: setup-kubeconfig
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
-      - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.path }}/kubernetes/ --recursive
+      - name: deploy
+        run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.kubernetesPath }}/ --recursive
 
-      - name: Verify deployment
+      - name: verify
         run: kubectl rollout status deployment

@@ -1,4 +1,5 @@
-name: kubernetes
+name: infrastructure
+
 env:
   path: infrastructure/kubernetes
 
@@ -10,23 +11,24 @@ on:
       - main
 
 jobs:
-  build:
+  
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: checkout
         uses: actions/checkout@v2
 
-      - name: Install doctl
+      - name: setup-doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
+      - name: setup-kubeconfig
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
-      - name: Deploy to DigitalOcean Kubernetes
+      - name: deploy
         run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.path }}/ --recursive
 
-      - name: Verify deployment
+      - name: verify
         run: kubectl rollout status deployment

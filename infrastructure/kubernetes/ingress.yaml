@@ -13,7 +13,9 @@ spec:
         - api.squidcode.xyz
         - leetcode.squidcode.xyz
       secretName: example-tls
+      
   rules:
+    
     - host: squidcode.xyz
       http:
         paths:
@@ -24,6 +26,7 @@ spec:
                 name: squidcode-frontend-service
                 port:
                   number: 80
+
     - host: api.squidcode.xyz
       http:
         paths:
@@ -34,6 +37,7 @@ spec:
                 name: squidcode-backend-service
                 port:
                   number: 80
+
     - host: leetcode.squidcode.xyz
       http:
         paths:
