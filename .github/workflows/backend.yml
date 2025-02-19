@@ -84,7 +84,7 @@ jobs:
           ./gradlew buildLayers
           
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.path }}/build/docker/main
           file: ${{ env.path }}/build/docker/main/Dockerfile
@@ -101,7 +101,7 @@ jobs:
           ./gradlew dockerPrepareContext
 
       - name: Build and Push Docker Image (Native)
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: false
         with:
           context: ${{ env.path }}/build/docker/native-main

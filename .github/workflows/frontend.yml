@@ -75,7 +75,7 @@ jobs:
         run: doctl registry login --expiry-seconds 1200
       
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.path }}
           file: ${{ env.path }}/Dockerfile
