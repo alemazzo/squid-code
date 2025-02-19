@@ -7,8 +7,8 @@ env:
 on:
   push:
     paths:
-      - 'squidcode-frontend/**'
-      - '.github/workflows/frontend.yml'
+      - squidcode-frontend/**
+      - .github/workflows/frontend.yml
 
 jobs:
   build:
