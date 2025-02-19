@@ -1,17 +1,19 @@
 name: runner-java
 
+env:
+  path: services/squidcode-runners/java
+  image: alessandromazzoli/squidcode-runner-java
+  platforms: linux/amd64,linux/arm64
+
 on:
   push:
     paths:
-      - 'squidcode-runners/java/**'
-      - '.github/workflows/runner-java.yml'
+      - 'services/squidcode-runners/java/**'
 
 jobs:
   build:
     name: Build & push docker image
     runs-on: ubuntu-latest
-    env:
-      IMG_NAME: alessandromazzoli/squidcode-runner-java
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v2
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
-          context: squidcode-runners/java
-          platforms: linux/amd64,linux/arm64
+          context: ${{ env.path }}
+          platforms: ${{ env.platforms }}
           push: true
-          tags: alessandromazzoli/squidcode-runner-java:latest
+          tags: ${{ env.image }}:latest

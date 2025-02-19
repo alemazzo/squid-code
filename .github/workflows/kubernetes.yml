@@ -1,10 +1,11 @@
 name: kubernetes
+env:
+  path: infrastructure/kubernetes
 
 on:
   push:
     paths:
-      - kubernetes/**
-      - .github/workflows/kubernetes.yml
+      - infrastructure/kubernetes/**
     branches:
       - main
 
@@ -25,7 +26,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl replace --force -f $GITHUB_WORKSPACE/kubernetes/ --recursive
+        run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.path }}/ --recursive
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx
+        run: kubectl rollout status deployment

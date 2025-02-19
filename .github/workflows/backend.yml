@@ -4,11 +4,14 @@ env:
   build: ./gradlew build
   test: ./gradlew test
   deploy: ./gradlew dockerPushNative
+  path: services/squidcode-backend
+  image: alessandromazzoli/squidcode-backend
+  platforms: linux/amd64
 
 on:
   push:
     paths:
-      - squidcode-backend/**
+      - services/squidcode-backend/**
 
 jobs:
 
@@ -30,11 +33,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build
-        working-directory: squidcode-backend
+        working-directory: ${{ env.path }}
         run: '${{ env.build }}'
 
       - name: Test
-        working-directory: squidcode-backend
+        working-directory: ${{ env.path }}
         run: '${{ env.test }}'
 
   release:
@@ -75,7 +78,7 @@ jobs:
         run: doctl registry login --expiry-seconds 1200
 
       - name: Prepare Dockerfile & Context
-        working-directory: squidcode-backend
+        working-directory: ${{ env.path }}
         run: |
           ./gradlew dockerfile
           ./gradlew buildLayers
@@ -83,14 +86,14 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
-          context: ./squidcode-backend/build/docker/main
-          file: ./squidcode-backend/build/docker/main/Dockerfile
-          platforms: linux/amd64
+          context: ${{ env.path }}/build/docker/main
+          file: ${{ env.path }}/build/docker/main/Dockerfile
+          platforms: ${{ env.platforms }}
           push: true
-          tags: ${{ secrets.REGISTRY_NAME }}/squidcode-backend:latest
+          tags: ${{ env.image }}:latest
 
       - name: Prepare Dockerfile & Context (Native)
-        working-directory: squidcode-backend
+        working-directory: ${{ env.path }}
         if: false
         run: |
           ./gradlew dockerfileNative
@@ -101,11 +104,11 @@ jobs:
         uses: docker/build-push-action@v4
         if: false
         with:
-          context: ./squidcode-backend/build/docker/native-main
-          file: ./squidcode-backend/build/docker/native-main/DockerfileNative
-          platforms: linux/amd64, linux/arm64
+          context: ${{ env.path }}/build/docker/native-main
+          file: ${{ env.path }}/build/docker/native-main/DockerfileNative
+          platforms: ${{ env.platforms }}
           push: true
-          tags: ${{ secrets.REGISTRY_NAME }}/squidcode-backend:latest
+          tags: ${{ env.image }}:latest
       
   deploy:
     runs-on: ubuntu-latest
@@ -129,7 +132,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl replace --force -f $GITHUB_WORKSPACE/squidcode-backend/kubernetes/ --recursive
+        run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.path }}/kubernetes/ --recursive
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/squidcode-backend
+        run: kubectl rollout status deployment

@@ -3,11 +3,14 @@ name: frontend
 env:
   install: 'npm install'
   build: 'npm run build'
+  path: services/squidcode-frontend
+  image: alessandromazzoli/squidcode-frontend
+  platforms: linux/amd64
 
 on:
   push:
     paths:
-      - squidcode-frontend/**
+      - services/squidcode-frontend/**
 
 jobs:
   build:
@@ -26,7 +29,7 @@ jobs:
 
       # Step 3: Install dependencies and build the app
       - name: Install dependencies and build
-        working-directory: ./squidcode-frontend
+        working-directory: ${{ env.path }}
         run: |
           ${{ env.install }}
           ${{ env.build }}
@@ -52,7 +55,7 @@ jobs:
 
       # Step 3: Install dependencies and build the app
       - name: Install dependencies and build
-        working-directory: ./squidcode-frontend
+        working-directory: ${{ env.path }}
         run: |
           ${{ env.install }}
           ${{ env.build }}
@@ -74,11 +77,11 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
-          context: ./squidcode-frontend/
-          file: ./squidcode-frontend/Dockerfile
-          platforms: linux/amd64
+          context: ${{ env.path }}
+          file: ${{ env.path }}/Dockerfile
+          platforms: ${{ env.platforms }}
           push: true
-          tags: ${{ secrets.REGISTRY_NAME }}/squidcode-frontend:latest
+          tags: ${{ env.image }}:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -101,7 +104,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl replace --force -f $GITHUB_WORKSPACE/squidcode-frontend/kubernetes/ --recursive
+        run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.path }}/kubernetes/ --recursive
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/squidcode-frontend
+        run: kubectl rollout status deployment
