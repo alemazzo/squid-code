@@ -1,5 +1,5 @@
 # Use an official OpenJDK slim image
-FROM openjdk:19-slim
+FROM openjdk:20-slim
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' coderunner
