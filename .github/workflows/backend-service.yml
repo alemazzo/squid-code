@@ -83,7 +83,7 @@ jobs:
           ./gradlew buildLayers
           
       - name: build-and-push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ${{ env.applicationPath }}/build/docker/main
           file: ${{ env.applicationPath }}/build/docker/main/Dockerfile
@@ -100,7 +100,7 @@ jobs:
           ./gradlew dockerPrepareContext
 
       - name: build-and-push-native
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: false
         with:
           context: ${{ env.applicationPath }}/build/docker/native-main
