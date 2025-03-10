@@ -69,7 +69,7 @@ jobs:
         run: doctl registry login --expiry-seconds 1200
       
       - name: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ${{ env.applicationPath }}
           file: ${{ env.applicationPath }}/Dockerfile
