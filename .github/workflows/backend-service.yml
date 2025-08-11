@@ -23,7 +23,7 @@ jobs:
     steps:
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: setup-java
         uses: actions/setup-java@v4
@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: setup-java
         uses: actions/setup-java@v4
@@ -118,7 +118,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: setup-doct
         uses: digitalocean/action-doctl@v2
