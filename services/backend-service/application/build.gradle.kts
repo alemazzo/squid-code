@@ -38,7 +38,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("com.google.api-client:google-api-client:2.8.0") // Main library
 	implementation("com.google.oauth-client:google-oauth-client:1.39.0") // OAuth
-	implementation("com.google.http-client:google-http-client-jackson2:1.47.1") // Jackson factory
+	implementation("com.google.http-client:google-http-client-jackson2:2.0.0") // Jackson factory
 
 	// Micronaut MongoDB
 	implementation("io.micronaut.data:micronaut-data-mongodb")
