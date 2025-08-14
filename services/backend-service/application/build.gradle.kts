@@ -36,7 +36,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-	implementation("com.google.api-client:google-api-client:2.8.0") // Main library
+	implementation("com.google.api-client:google-api-client:2.8.1") // Main library
 	implementation("com.google.oauth-client:google-oauth-client:1.39.0") // OAuth
 	implementation("com.google.http-client:google-http-client-jackson2:2.0.0") // Jackson factory
 
