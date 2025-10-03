@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@leetnotion/leetcode-api": "^1.10.0",
-    "@tanstack/svelte-query": "^5.62.7",
+    "@tanstack/svelte-query": "^6.0.0",
     "axios": "^1.7.9",
     "page": "^1.3.7"
   }
