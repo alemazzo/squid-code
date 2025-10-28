@@ -1,5 +1,5 @@
 # Step 1: Build your Svelte app
-FROM node:22 AS build
+FROM node:24 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
