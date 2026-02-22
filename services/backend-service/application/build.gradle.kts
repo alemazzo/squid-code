@@ -34,7 +34,7 @@ dependencies {
 	implementation("jakarta.inject:jakarta.inject-api")
 	// io.jsonwebtoken
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+	implementation("io.jsonwebtoken:jjwt-impl:0.13.0")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("com.google.api-client:google-api-client:2.8.1") // Main library
 	implementation("com.google.oauth-client:google-oauth-client:1.39.0") // OAuth
