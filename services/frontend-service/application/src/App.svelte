@@ -8,14 +8,12 @@
 	import Coding from "./routes/Coding.svelte";
 	import Win from "./routes/Win.svelte";
 
-  export let url = "";
-
   onMount(() => {
  
   });
 </script>
 
-<Router {url}>
+<Router>
   <!-- Main Content -->
   <main class="main-content">
     <Route path="/" component={Home} />
