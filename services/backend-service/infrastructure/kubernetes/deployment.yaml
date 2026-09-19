@@ -17,6 +17,11 @@ spec:
     metadata:
       labels:
         app: squidcode-backend
+      annotations:
+        # Discovery annotations for the Prometheus/Micrometer endpoint.
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/prometheus"
     spec:
       containers:
         - name: squidcode-backend

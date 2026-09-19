@@ -27,6 +27,17 @@ micronaut:
           - X-CSRF-TOKEN
           - X-Auth-Token
           - X-XSRF-TOKEN
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+
+# Management endpoint used by Prometheus scraping.
+# Exposed unauthenticated on purpose: the port is only reachable inside the cluster.
+endpoints:
+  prometheus:
+    sensitive: false
 
 google:
   client-id: ${GOOGLE_CLIENT_ID:}
