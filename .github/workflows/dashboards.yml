@@ -1,0 +1,100 @@
+name: dashboards
+
+# The Grafana dashboards of the app are applied here, on `main`, and not by the
+# service workflows: their path filters (`services/**`) never see
+# `deploy/observability/dashboards/**`, so before this workflow existed a change
+# to a dashboard JSON reached nobody.
+#
+# One dedicated workflow (instead of a step repeated in backend-service.yml,
+# frontend-service.yml and leetcode-service.yml) keeps the logic in a single
+# place: the service workflows stay untouched, and a new dashboard — or a new
+# app — only has to live in `deploy/observability/dashboards/*.json`.
+#
+# `scripts/deploy-k3s.sh` is in the paths on purpose: it holds the local twin of
+# the block below, and the two are meant to stay in sync.
+
+on:
+  push:
+    paths:
+      - deploy/observability/dashboards/**
+      - scripts/deploy-k3s.sh
+      - .github/workflows/dashboards.yml
+    branches:
+      - main
+
+env:
+  dashboardsPath: deploy/observability/dashboards
+  # Folder convention (vps-infra README, § Monitoring → Folders): one folder per
+  # app, named after its namespace.
+  K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE || 'squidcode' }}
+  MONITORING_NAMESPACE: ${{ vars.MONITORING_NAMESPACE || 'monitoring' }}
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: dashboards-deploy
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+
+      - name: setup-ssh
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: deploy
+        run: |
+          set -euo pipefail
+          export SSH_OPTS="-i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+          REMOTE_DIR="/tmp/${K8S_NAMESPACE}-dashboards"
+
+          # The JSONs are read by kubectl on the node, so they have to travel.
+          # `tar` over the existing ssh channel avoids a second authentication
+          # and needs no scp/rsync on the runner image.
+          tar -C "${dashboardsPath}" -czf - . \
+            | ssh $SSH_OPTS "$HOST" "rm -rf '${REMOTE_DIR}' && mkdir -p '${REMOTE_DIR}' && tar -C '${REMOTE_DIR}' -xzf -"
+
+          # label/annotate with --local rewrite the manifest on the fly, so the
+          # apply is the only write to the API: `last-applied-configuration`
+          # matches the live object (kubectl diff stays meaningful) and a later
+          # apply cannot drop the folder annotation — which is what puts the
+          # dashboard in the app folder.
+          ssh $SSH_OPTS -n "$HOST" "set -euo pipefail
+            for json in ${REMOTE_DIR}/*.json; do
+              [ -e \"\$json\" ] || { echo 'nessuna dashboard da applicare'; exit 0; }
+              name=\$(basename \"\$json\" .json)
+              cm=grafana-dash-\$name
+              kubectl -n ${MONITORING_NAMESPACE} create configmap \"\$cm\" \
+                --from-file=\"\$name.json=\$json\" --dry-run=client -o yaml \
+                | kubectl label -f - grafana_dashboard=1 --local -o yaml \
+                | kubectl annotate -f - k8s-sidecar-target-directory=/tmp/dashboards/${K8S_NAMESPACE} --local -o yaml \
+                | kubectl apply -f -
+              echo \"\${cm}: \${name} -> cartella ${K8S_NAMESPACE}\"
+            done"
+
+      - name: verify
+        run: |
+          set -euo pipefail
+          export SSH_OPTS="-i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+          # The two annotations are the whole point: the folder one is what puts
+          # the dashboard in the app folder, and being *inside* the applied
+          # manifest is what keeps it there — a label/annotate run after the
+          # apply leaves the ConfigMap live but out of
+          # `kubectl.kubernetes.io/last-applied-configuration`, and the next
+          # apply of the same manifest would silently drop it again.
+          for json in "${dashboardsPath}"/*.json; do
+            [ -e "$json" ] || { echo "nessuna dashboard versionata"; exit 0; }
+            name="$(basename "$json" .json)"
+            cm="grafana-dash-${name}"
+            ssh $SSH_OPTS -n "$HOST" "set -euo pipefail
+              folder=\$(kubectl -n ${MONITORING_NAMESPACE} get cm ${cm} -o jsonpath='{.metadata.annotations.k8s-sidecar-target-directory}')
+              if [ \"\$folder\" != \"/tmp/dashboards/${K8S_NAMESPACE}\" ]; then echo \"${cm}: cartella \$folder, attesa /tmp/dashboards/${K8S_NAMESPACE}\"; exit 1; fi
+              kubectl -n ${MONITORING_NAMESPACE} get cm ${cm} -o jsonpath='{.metadata.annotations.kubectl\.kubernetes\.io/last-applied-configuration}' | grep -q k8s-sidecar-target-directory || { echo \"${cm}: l'annotazione della cartella non e' nel last-applied-configuration\"; exit 1; }
+              echo \"${cm}: cartella \$folder, last-applied-configuration allineato\""
+          done
