@@ -38,6 +38,10 @@ dependencies {
 	implementation("com.google.oauth-client:google-oauth-client:1.39.0") // OAuth
 	implementation("com.google.http-client:google-http-client-jackson2:2.2.0") // Jackson factory
 
+	// Micronaut Management + Micrometer (endpoint /prometheus)
+	implementation("io.micronaut:micronaut-management")
+	implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
+
 	// Micronaut MongoDB
 	implementation("io.micronaut.data:micronaut-data-mongodb")
 	implementation("io.micronaut.mongodb:micronaut-mongo-sync")
