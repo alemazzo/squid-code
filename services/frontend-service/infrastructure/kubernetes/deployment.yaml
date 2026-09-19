@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: squidcode-frontend
+  namespace: apps
   labels:
     app: squidcode-frontend
 spec:
@@ -20,14 +21,15 @@ spec:
         app: squidcode-frontend
     spec:
       containers:
-        - name: squidcode-backend
-          image: registry.digitalocean.com/alessandromazzoli/squidcode-frontend:latest
+        - name: squidcode-frontend
+          image: ghcr.io/alemazzo/squid-code/frontend:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "50m"
+              memory: "32Mi"
+              cpu: "20m"
             limits:
-              memory: "256Mi"
-              cpu: "200m"
+              memory: "128Mi"
+              cpu: "300m"

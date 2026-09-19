@@ -2,6 +2,9 @@ package io.github.alemazzo.squidcode.backend.submission.application
 
 import io.github.alemazzo.squidcode.backend.submission.domain.Submission
 
+import io.micronaut.serde.annotation.Serdeable
+
+@Serdeable
 data class SubmissionDTO(
 	val submissionId: String,
 	val status: String,
