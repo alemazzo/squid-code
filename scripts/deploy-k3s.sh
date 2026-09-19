@@ -103,6 +103,15 @@ fi
 
 ok "applico namespace, configmap e mongodb"
 kubectl apply -f "${REPO_ROOT}/infrastructure/kubernetes/namespace.yaml" >/dev/null
+# Volume statico e claim solo se assenti: lo spec di un PV e quello di un claim già
+# legato sono immutabili, e il claim e' pre-bound al volume (spec.volumeName).
+# Dettagli in infrastructure/kubernetes/README.md.
+if ! kubectl get pv squidcode-mongo-data-static >/dev/null 2>&1; then
+  kubectl apply -f "${REPO_ROOT}/infrastructure/kubernetes/mongo-static-pv.yaml" >/dev/null
+fi
+if ! kubectl -n "$NAMESPACE" get pvc squidcode-mongo-data >/dev/null 2>&1; then
+  kubectl -n "$NAMESPACE" apply -f "${REPO_ROOT}/infrastructure/kubernetes/mongodb-pvc.yaml" >/dev/null
+fi
 kubectl -n "$NAMESPACE" create configmap squidcode-config \
   --from-literal="frontend-origin=https://${DOMAIN_FRONTEND}" \
   --from-literal="backend-origin=https://${DOMAIN_BACKEND}" \

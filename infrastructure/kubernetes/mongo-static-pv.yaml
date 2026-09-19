@@ -1,0 +1,42 @@
+# Static PersistentVolume holding the MongoDB data directory.
+#
+# It is not provisioned by the `local-path` provisioner: the volume points at the
+# directory that already contains the data, the same one used before the move to the
+# `squidcode` namespace. The directory name still contains the old `apps` namespace
+# (`..._apps_squidcode-mongo-data`) because it is the real path on disk: do not rename
+# it, renaming it means losing the data.
+#
+# `persistentVolumeReclaimPolicy: Retain` so that deleting the claim never deletes the
+# data; `squidcode-mongo-data` (in `mongodb-pvc.yaml`) is pre-bound to this volume via
+# `spec.volumeName`.
+#
+# Kept in the repo so the cluster can be rebuilt from scratch: this file is applied
+# only when the volume is absent (see the infrastructure workflow), because the spec of
+# a PersistentVolume is immutable.
+#
+# The `claimRef` bound by the controller is not listed here (it is set by the binder
+# and names the claim UID); if the claim is ever deleted and recreated, the volume goes
+# to `Released` and keeps a `claimRef` pointing at the old claim, and that stale
+# `claimRef` has to be removed before a new claim can bind (see README.md).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: squidcode-mongo-data-static
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  local:
+    path: /var/lib/rancher/k3s/storage/pvc-ef23b3a7-36b9-4f10-a904-056ab4812ae9_apps_squidcode-mongo-data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - hermes

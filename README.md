@@ -39,6 +39,15 @@ punto di entrata è Caddy. Non assegnare :80/:443 a un pod.
 dominio proprio basta puntarci un record `A` e aggiornare `DOMAIN_*` (script) e `SITE_*`/
 `frontend-origin` (workflow e ConfigMap).
 
+## Dati di MongoDB
+
+MongoDB scrive in una directory che **sopravvive al namespace**: il PVC `squidcode-mongo-data` è
+pre-bound a un PV statico con `persistentVolumeReclaimPolicy: Retain`
+(`infrastructure/kubernetes/mongo-static-pv.yaml`), che punta a
+`/var/lib/rancher/k3s/storage/pvc-ef23b3a7-36b9-4f10-a904-056ab4812ae9_apps_squidcode-mongo-data`.
+Il path porta ancora il vecchio namespace `apps`: è il percorso reale su disco, non va rinominato.
+Dettagli, ordine di apply e procedura di recupero: `infrastructure/kubernetes/README.md`.
+
 ## Deploy
 
 Automatico: ogni push su `main` che tocca un servizio ricostruisce l'immagine, la pubblica su
