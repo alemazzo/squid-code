@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: squidcode-backend
+  namespace: squidcode
 spec:
   replicas: 1
   strategy:
@@ -19,13 +20,34 @@ spec:
     spec:
       containers:
         - name: squidcode-backend
-          image: registry.digitalocean.com/alessandromazzoli/squidcode-backend:latest
+          image: ghcr.io/alemazzo/squid-code/backend:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"
+            - name: MONGODB_URI
+              value: mongodb://squidcode-mongo:27017/squidcode
+            - name: CORS_ALLOWED_ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: squidcode-config
+                  key: frontend-origin
+            - name: CORS_ALLOWED_ORIGIN_2
+              value: http://localhost:8080
+            # Google OAuth client id, injected by the deploy workflow
+            # (optional: the app boots without it, only /auth/login fails).
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: squidcode-backend-secrets
+                  key: google-client-id
+                  optional: true
           resources:
             requests:
               memory: "64Mi"
               cpu: "50m"
             limits:
-              memory: "256Mi"
-              cpu: "200m"
+              memory: "512Mi"
+              cpu: "700m"

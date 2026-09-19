@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: squidcode-leetcode-service
+  namespace: squidcode
 spec:
   selector:
     app: squidcode-leetcode
@@ -9,4 +10,6 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-  type: ClusterIP
+      # NodePorts are bound on loopback only; the public entry point is Caddy.
+      nodePort: 30092
+  type: NodePort

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: squidcode-leetcode
+  namespace: squidcode
 spec:
   replicas: 1
   strategy:
@@ -19,13 +20,17 @@ spec:
     spec:
       containers:
         - name: squidcode-leetcode
-          image: registry.digitalocean.com/alessandromazzoli/squidcode-leetcode:latest
+          image: ghcr.io/alemazzo/squid-code/leetcode:latest
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8000
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
           resources:
             requests:
               memory: "64Mi"
               cpu: "50m"
             limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "500m"
