@@ -49,17 +49,23 @@ const viteBin = path.resolve(
 );
 const server = spawn(
   process.execPath,
-  [viteBin, "preview", "--port", String(PORT), "--strictPort"],
+  [viteBin, "preview", "--host", "127.0.0.1", "--port", String(PORT), "--strictPort"],
   { stdio: ["ignore", "pipe", "pipe"] },
 );
-server.stderr.on("data", (chunk) => process.stderr.write(`[preview] ${chunk}`));
+// Keep the preview output: it is the only clue when the server does not
+// come up. It is dumped in the failure branch below.
+const previewOutput = [];
+server.stdout.on("data", (chunk) => previewOutput.push(String(chunk)));
+server.stderr.on("data", (chunk) => previewOutput.push(String(chunk)));
 
 let browser;
 let exitCode = 0;
 
 try {
   if (!(await waitForServer())) {
-    throw new Error(`${BASE_URL} non risponde: "vite preview" non è partito`);
+    throw new Error(
+      `${BASE_URL} non risponde: "vite preview" non è partito${previewOutput.length ? `\n--- output di vite preview ---\n${previewOutput.join("")}` : " (nessun output dal processo)"}`,
+    );
   }
 
   browser = await chromium.launch();
