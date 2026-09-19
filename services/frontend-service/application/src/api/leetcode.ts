@@ -1,5 +1,6 @@
-const baseUrl = 'https://leetcode.com';
-const endpoint = "https://leetcode.squidcode.xyz/leetcode/";
+import { LEETCODE_BASE_URL } from "../config";
+
+const endpoint = `${LEETCODE_BASE_URL}/leetcode/`;
 
 
 export async function getLeetcodeInfo(id: String) {

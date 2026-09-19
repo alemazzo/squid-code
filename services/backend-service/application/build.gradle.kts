@@ -1,5 +1,3 @@
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-
 plugins {
 	id("org.jetbrains.kotlin.jvm") version "1.9.22"
 	id("org.jetbrains.kotlin.plugin.allopen") version "1.9.22"
@@ -74,12 +72,4 @@ micronaut {
 		deduceEnvironment.set(true)
 		optimizeNetty.set(true)
 	}
-}
-
-tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
-	baseImage("eclipse-temurin:21-jre-jammy")
-}
-
-tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
-	jdkVersion.set("21")
 }

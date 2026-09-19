@@ -1,17 +1,21 @@
 name: infrastructure
 
-env:
-  path: infrastructure/kubernetes
-
 on:
   push:
     paths:
       - infrastructure/kubernetes/**
+      - .github/workflows/infrastructure.yml
     branches:
       - main
 
+env:
+  kubernetesPath: infrastructure/kubernetes
+  siteUrl: https://squidcode.5-175-171-84.sslip.io
+  backendUrl: https://api.squidcode.5-175-171-84.sslip.io
+  leetcodeUrl: https://leetcode.squidcode.5-175-171-84.sslip.io
+
 jobs:
-  
+
   deploy:
     runs-on: ubuntu-latest
 
@@ -19,16 +23,37 @@ jobs:
       - name: checkout
         uses: actions/checkout@v7
 
-      - name: setup-doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: setup-kubeconfig
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
+      - name: setup-ssh
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: deploy
-        run: kubectl replace --force -f $GITHUB_WORKSPACE/${{ env.path }}/ --recursive
+        run: |
+          export SSH_OPTS="-i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+          for f in ${kubernetesPath}/*.yaml; do
+            echo "-> $f"
+            ssh $SSH_OPTS "$HOST" "kubectl -n apps apply -f -" < "$f"
+          done
+          ssh $SSH_OPTS "$HOST" "kubectl -n apps rollout status deployment/squidcode-mongo --timeout=300s"
 
-      - name: verify
-        run: kubectl rollout status deployment
+      - name: smoke-test
+        run: |
+          check() {
+            label="$1"; shift; expected="$1"; shift
+            for i in $(seq 1 20); do
+              code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$@" || true)"
+              [ "$code" = "$expected" ] && { echo "${label} -> HTTP ${code}"; return 0; }
+              sleep 5
+            done
+            echo "${label} fallito: HTTP ${code:-nessuna risposta}"
+            return 1
+          }
+          check frontend 200 "${siteUrl}/"
+          check leetcode 200 "${leetcodeUrl}/leetcode/problems/two-sum"
+          check backend 201 -X POST "${backendUrl}/submissions/" \
+            -H 'Content-Type: application/json' \
+            -d '{"problemId":"two-sum","code":"print(1)","language":"python"}'
