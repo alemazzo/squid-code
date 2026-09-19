@@ -12,7 +12,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.0.0",
+    "leetcode-query": "^2.0.0",
     "node-fetch": "^3.3.2",
-    "leetcode-query": "^2.0.0"
+    "prom-client": "^15.1.3"
   }
 }
