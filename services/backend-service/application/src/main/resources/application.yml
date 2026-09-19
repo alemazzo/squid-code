@@ -10,8 +10,8 @@ micronaut:
       enabled: true
       configuration:
         allowedOrigins:
-          - ${CORS_ALLOWED_ORIGIN:http://localhost:*}
-          - ${CORS_ALLOWED_ORIGIN_2:http://localhost:8080}
+          - ${CORS_ALLOWED_ORIGIN:`http://localhost:*`}
+          - ${CORS_ALLOWED_ORIGIN_2:`http://localhost:8080`}
         allowedMethods:
           - GET
           - POST
@@ -33,9 +33,9 @@ google:
 
 # MongoDB Configuration
 mongodb:
-  uri: ${MONGODB_URI:mongodb://localhost:27017/squidcode}
+  uri: ${MONGODB_URI:`mongodb://localhost:27017/squidcode`}
 
 # RabbitMQ Configuration
 rabbitmq:
-  uri: ${RABBITMQ_URI:amqp://guest:guest@localhost:5672}
+  uri: ${RABBITMQ_URI:`amqp://guest:guest@localhost:5672`}
 
