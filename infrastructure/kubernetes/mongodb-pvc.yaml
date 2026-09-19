@@ -1,5 +1,15 @@
 # Claim for the MongoDB data directory.
 #
+# Pre-bound: it names the static volume declared in `mongo-static-pv.yaml`, which keeps
+# the very directory that already holds the data
+# (/var/lib/rancher/k3s/storage/pvc-ef23b3a7-36b9-4f10-a904-056ab4812ae9_apps_squidcode-mongo-data).
+# The directory name still carries the old `apps` namespace: it is the real path on disk,
+# it is not renamed.
+#
+# `spec.volumeName` is declared here (not only in the cluster) because the manifest has to
+# describe the reality of the cluster: without it kubectl apply tries to reset the field,
+# and the field is immutable on a bound claim.
+#
 # Kept in its own file on purpose: the spec of a bound PersistentVolumeClaim is
 # immutable, so re-applying it fails when the cluster already holds a claim that
 # was bound by hand (e.g. to a static volume kept across namespace moves).
@@ -13,6 +23,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: local-path
+  volumeName: squidcode-mongo-data-static
   resources:
     requests:
       storage: 2Gi
