@@ -1,0 +1,14 @@
+# Environment specific configuration shared by the services.
+#
+# `frontend-origin` is the public origin the browser uses: it is the CORS
+# allowed origin of the backend and must match the host served by Caddy.
+# Change it here (and SITE_* in .github/workflows/env) when the domain changes.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: squidcode-config
+  namespace: apps
+data:
+  frontend-origin: "https://squidcode.5-175-171-84.sslip.io"
+  backend-origin: "https://api.squidcode.5-175-171-84.sslip.io"
+  leetcode-origin: "https://leetcode.squidcode.5-175-171-84.sslip.io"
