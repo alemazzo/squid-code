@@ -64,6 +64,19 @@ Lo script costruisce con `nerdctl`/buildkit (che scrivono direttamente nel conta
 con lo **stesso nome immagine** usato dai manifest: `imagePullPolicy: IfNotPresent` fa
 scegliere l'immagine locale, senza passare da un registry.
 
+### Dashboard Grafana
+
+Le dashboard versionate in `deploy/observability/dashboards/*.json` finiscono in Grafana come
+ConfigMap nel namespace `monitoring` (label `grafana_dashboard=1`, annotazione
+`k8s-sidecar-target-directory=/tmp/dashboards/<namespace>`, dove `<namespace>` è la cartella
+Grafana dell'app). Ci pensano due percorsi che tengono la stessa logica:
+
+- `scripts/deploy-k3s.sh`, quando si deploya a mano;
+- `.github/workflows/dashboards.yml`, su ogni push in `main` che tocca una dashboard.
+
+Nessun workflow di servizio ha `deploy/observability/dashboards/**` fra i trigger, quindi una
+modifica a un JSON passa solo da qui.
+
 ## Secrets e variabili richieste su GitHub
 
 | Nome | Uso |
