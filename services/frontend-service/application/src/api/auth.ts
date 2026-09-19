@@ -1,5 +1,5 @@
 import { authStore } from "../stores/authStore";
-import { navigate } from "svelte-routing";
+import { navigate } from "../router/index";
 
 import { API_BASE_URL } from "../config";
 

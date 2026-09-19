@@ -43,6 +43,17 @@ jobs:
         working-directory: ${{ env.applicationPath }}
         run: npm run build
 
+      # The bundle is loaded in a real browser: fail the build when the page
+      # does not mount (e.g. a router that is incompatible with the Svelte
+      # version in use) instead of shipping a blank page.
+      - name: install-browsers
+        working-directory: ${{ env.applicationPath }}
+        run: npx playwright install --with-deps chromium
+
+      - name: smoke-test
+        working-directory: ${{ env.applicationPath }}
+        run: npm run smoke
+
   release:
     runs-on: ubuntu-latest
     needs: build

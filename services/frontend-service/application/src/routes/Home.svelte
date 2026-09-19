@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { getRandomLeetCodeQuestion } from "../api/leetcode";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "../router/index";
   
   let username = "";
   let isUsernameValid = false;

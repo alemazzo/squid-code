@@ -1,6 +1,6 @@
 <script>
   
-  import { navigate } from 'svelte-routing';
+  import { navigate } from "../router/index";
 
   function home() {
     navigate('/');
