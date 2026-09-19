@@ -82,19 +82,28 @@ jobs:
           set -euo pipefail
           export SSH_OPTS="-i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
-          # The two annotations are the whole point: the folder one is what puts
-          # the dashboard in the app folder, and being *inside* the applied
-          # manifest is what keeps it there — a label/annotate run after the
-          # apply leaves the ConfigMap live but out of
-          # `kubectl.kubernetes.io/last-applied-configuration`, and the next
-          # apply of the same manifest would silently drop it again.
+          # Three things are checked per dashboard, all of them on the node:
+          # the folder annotation (it is what puts the dashboard in the app
+          # folder), the annotation being *inside* the applied manifest (a
+          # label/annotate run after the apply leaves the ConfigMap live but out
+          # of `kubectl.kubernetes.io/last-applied-configuration`, and the next
+          # apply of the same manifest would silently drop it again), and the
+          # ConfigMap data being byte for byte the file committed here — the
+          # round trip of the JSONs through tar and kubectl.
           for json in "${dashboardsPath}"/*.json; do
             [ -e "$json" ] || { echo "nessuna dashboard versionata"; exit 0; }
             name="$(basename "$json" .json)"
             cm="grafana-dash-${name}"
-            ssh $SSH_OPTS -n "$HOST" "set -euo pipefail
+            want="$(sha256sum "$json" | cut -d' ' -f1)"
+            got="$(ssh $SSH_OPTS -n "$HOST" "set -euo pipefail
               folder=\$(kubectl -n ${MONITORING_NAMESPACE} get cm ${cm} -o jsonpath='{.metadata.annotations.k8s-sidecar-target-directory}')
-              if [ \"\$folder\" != \"/tmp/dashboards/${K8S_NAMESPACE}\" ]; then echo \"${cm}: cartella \$folder, attesa /tmp/dashboards/${K8S_NAMESPACE}\"; exit 1; fi
-              kubectl -n ${MONITORING_NAMESPACE} get cm ${cm} -o jsonpath='{.metadata.annotations.kubectl\.kubernetes\.io/last-applied-configuration}' | grep -q k8s-sidecar-target-directory || { echo \"${cm}: l'annotazione della cartella non e' nel last-applied-configuration\"; exit 1; }
-              echo \"${cm}: cartella \$folder, last-applied-configuration allineato\""
+              if [ \"\$folder\" != \"/tmp/dashboards/${K8S_NAMESPACE}\" ]; then echo \"${cm}: cartella \$folder, attesa /tmp/dashboards/${K8S_NAMESPACE}\" >&2; exit 1; fi
+              kubectl -n ${MONITORING_NAMESPACE} get cm ${cm} -o jsonpath='{.metadata.annotations.kubectl\.kubernetes\.io/last-applied-configuration}' | grep -q k8s-sidecar-target-directory || { echo \"${cm}: l'annotazione della cartella non e' nel last-applied-configuration\" >&2; exit 1; }
+              echo \"${cm}: cartella \$folder, last-applied-configuration allineato\" >&2
+              kubectl -n ${MONITORING_NAMESPACE} get cm ${cm} -o jsonpath='{.data.${name}\.json}' | sha256sum | cut -d' ' -f1")"
+            if [ "${want}" != "${got}" ]; then
+              echo "${cm}: il ConfigMap non contiene il file del repo (${want:0:12} != ${got:0:12})"
+              exit 1
+            fi
+            echo "${cm}: ok (cartella, last-applied-configuration, sha256 ${want:0:12})"
           done
