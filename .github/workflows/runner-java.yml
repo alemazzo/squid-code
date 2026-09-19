@@ -38,11 +38,13 @@ jobs:
 
       - name: build-and-push
         uses: docker/build-push-action@v7
-        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           context: ${{ env.path }}
           platforms: ${{ env.platforms }}
-          push: true
+          # The Dockerfile is built on every push, so a broken base image is
+          # caught on the branch instead of only on main; the image is
+          # published only from main.
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             ${{ env.image }}:latest
             ${{ env.image }}:${{ github.sha }}
