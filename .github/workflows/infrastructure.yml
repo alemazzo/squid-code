@@ -35,7 +35,16 @@ jobs:
         run: |
           export SSH_OPTS="-i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+          # Claims go first and are created only when absent: the spec of a bound
+          # PersistentVolumeClaim is immutable, so re-applying one the cluster already
+          # bound (e.g. to a static volume kept across a namespace move) fails the run.
+          for f in ${kubernetesPath}/*pvc*.yaml; do
+            [ -e "$f" ] || continue
+            echo "-> $f (solo se assente)"
+            ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" get pvc squidcode-mongo-data >/dev/null 2>&1 || kubectl -n \"$K8S_NAMESPACE\" apply -f -" < "$f"
+          done
           for f in ${kubernetesPath}/*.yaml; do
+            case "$f" in *pvc*) continue;; esac
             echo "-> $f"
             ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" apply -f -" < "$f"
           done

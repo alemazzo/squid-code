@@ -1,5 +1,6 @@
-# Use an official OpenJDK slim image
-FROM openjdk:25-slim
+# Eclipse Temurin is the maintained OpenJDK distribution: the legacy
+# `openjdk` Docker Hub image has no 25 tag, so the build failed to resolve it.
+FROM eclipse-temurin:25-jdk
 
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' coderunner

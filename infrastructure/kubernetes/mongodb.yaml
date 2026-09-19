@@ -3,18 +3,6 @@
 # Single replica with a local-path volume: the k3s VPS has one node, so there
 # is nothing to replicate to. Data lives in /var/lib/rancher/k3s/storage and is
 # included in the documented cluster backup.
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: squidcode-mongo-data
-  namespace: squidcode
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: local-path
-  resources:
-    requests:
-      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
