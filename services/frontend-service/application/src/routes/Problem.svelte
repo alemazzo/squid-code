@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { getLeetcodeInfo } from "../api/leetcode";
-  import { navigate } from "svelte-routing";
+  import { navigate } from "../router/index";
 
   export let id;
   let problem = {};
