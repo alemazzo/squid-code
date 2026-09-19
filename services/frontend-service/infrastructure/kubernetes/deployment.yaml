@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: squidcode-frontend
-  namespace: apps
+  namespace: squidcode
   labels:
     app: squidcode-frontend
 spec:

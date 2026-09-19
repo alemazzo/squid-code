@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: squidcode-backend-service
-  namespace: apps
+  namespace: squidcode
 spec:
   type: NodePort
   selector:

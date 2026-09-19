@@ -14,6 +14,7 @@ on:
 env:
   applicationPath: services/frontend-service/application
   kubernetesPath: services/frontend-service/infrastructure/kubernetes
+  K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE || 'squidcode' }}
   deployment: squidcode-frontend
   container: squidcode-frontend
   registry: ghcr.io
@@ -119,10 +120,10 @@ jobs:
         run: |
           export SSH_OPTS="-i $HOME/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
-          ssh $SSH_OPTS "$HOST" "kubectl -n apps apply -f -" < ${kubernetesPath}/deployment.yaml
-          ssh $SSH_OPTS "$HOST" "kubectl -n apps apply -f -" < ${kubernetesPath}/service.yaml
-          ssh $SSH_OPTS "$HOST" "kubectl -n apps set image deployment/${deployment} ${container}=${image}:${GITHUB_SHA}"
-          ssh $SSH_OPTS "$HOST" "kubectl -n apps rollout status deployment/${deployment} --timeout=300s"
+          ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" apply -f -" < ${kubernetesPath}/deployment.yaml
+          ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" apply -f -" < ${kubernetesPath}/service.yaml
+          ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" set image deployment/${deployment} ${container}=${image}:${GITHUB_SHA}"
+          ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" rollout status deployment/${deployment} --timeout=300s"
 
       - name: smoke-test
         run: |

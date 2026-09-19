@@ -23,7 +23,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export KUBECONFIG="${KUBECONFIG:-/etc/rancher/k3s/k3s.yaml}"
 export PATH="/usr/local/bin:${PATH}"
 
-NAMESPACE="${NAMESPACE:-apps}"
+NAMESPACE="${K8S_NAMESPACE:-${NAMESPACE:-squidcode}}"
 REGISTRY="${REGISTRY:-ghcr.io/alemazzo/squid-code}"
 SUFFIX="${K8S_DOMAIN_SUFFIX:-5-175-171-84.sslip.io}"
 DOMAIN_FRONTEND="${DOMAIN_FRONTEND:-squidcode.${SUFFIX}}"

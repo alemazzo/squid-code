@@ -6,13 +6,13 @@ principale. Nessuno di questi file crea un ingress: l'esposizione pubblica è fa
 
 | File | Contenuto |
 |---|---|
-| `namespace.yaml` | namespace `apps` |
+| `namespace.yaml` | namespace `squidcode` |
 | `config.yaml` | ConfigMap `squidcode-config` (origini pubbliche usate dalla CORS del backend) |
 | `mongodb.yaml` | MongoDB single replica + PVC `local-path` + Service `squidcode-mongo` |
 
 I manifest dei servizi stanno accanto al codice, in `services/<servizio>/infrastructure/kubernetes/`:
 `deployment.yaml` (+ `service.yml` per leetcode) con immagine `ghcr.io/alemazzo/squid-code/<servizio>`,
-`imagePullPolicy: IfNotPresent`, namespace `apps` e un NodePort fisso.
+`imagePullPolicy: IfNotPresent`, namespace `squidcode` e un NodePort fisso.
 
 ## NodePort
 

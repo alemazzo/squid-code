@@ -7,7 +7,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: squidcode-mongo-data
-  namespace: apps
+  namespace: squidcode
 spec:
   accessModes:
     - ReadWriteOnce
@@ -20,7 +20,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: squidcode-mongo
-  namespace: apps
+  namespace: squidcode
 spec:
   replicas: 1
   strategy:
@@ -58,7 +58,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: squidcode-mongo
-  namespace: apps
+  namespace: squidcode
 spec:
   type: ClusterIP
   selector:

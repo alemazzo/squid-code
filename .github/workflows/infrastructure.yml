@@ -10,6 +10,7 @@ on:
 
 env:
   kubernetesPath: infrastructure/kubernetes
+  K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE || 'squidcode' }}
   siteUrl: https://squidcode.5-175-171-84.sslip.io
   backendUrl: https://api.squidcode.5-175-171-84.sslip.io
   leetcodeUrl: https://leetcode.squidcode.5-175-171-84.sslip.io
@@ -36,9 +37,9 @@ jobs:
           HOST="${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
           for f in ${kubernetesPath}/*.yaml; do
             echo "-> $f"
-            ssh $SSH_OPTS "$HOST" "kubectl -n apps apply -f -" < "$f"
+            ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" apply -f -" < "$f"
           done
-          ssh $SSH_OPTS "$HOST" "kubectl -n apps rollout status deployment/squidcode-mongo --timeout=300s"
+          ssh $SSH_OPTS "$HOST" "kubectl -n \"$K8S_NAMESPACE\" rollout status deployment/squidcode-mongo --timeout=300s"
 
       - name: smoke-test
         run: |

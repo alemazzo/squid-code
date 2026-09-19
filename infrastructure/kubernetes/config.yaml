@@ -7,7 +7,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: squidcode-config
-  namespace: apps
+  namespace: squidcode
 data:
   frontend-origin: "https://squidcode.5-175-171-84.sslip.io"
   backend-origin: "https://api.squidcode.5-175-171-84.sslip.io"

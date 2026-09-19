@@ -20,7 +20,7 @@ statico. Il backend legge MongoDB, l'origine CORS e il client id di Google dall'
 ## Dove gira
 
 Tutto gira su un **single node k3s** (VPS `5.175.171.84`, 2 vCPU / 7.7 GB) nel namespace
-`apps`, dietro **Caddy** che è l'unico ingress pubblico e termina il TLS:
+`squidcode`, dietro **Caddy** che è l'unico ingress pubblico e termina il TLS:
 
 ```
 internet -> Caddy (:80/:443) -> 127.0.0.1:<NodePort> -> pod
@@ -68,7 +68,7 @@ Opzionale, per far funzionare il login Google: crea nel cluster il secret
 `squidcode-backend-secrets` con la chiave `google-client-id`.
 
 ```bash
-kubectl -n apps create secret generic squidcode-backend-secrets \
+kubectl -n squidcode create secret generic squidcode-backend-secrets \
   --from-literal=google-client-id=<client-id>
 ```
 
