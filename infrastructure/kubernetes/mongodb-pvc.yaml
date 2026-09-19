@@ -1,0 +1,18 @@
+# Claim for the MongoDB data directory.
+#
+# Kept in its own file on purpose: the spec of a bound PersistentVolumeClaim is
+# immutable, so re-applying it fails when the cluster already holds a claim that
+# was bound by hand (e.g. to a static volume kept across namespace moves).
+# The infrastructure workflow therefore creates this claim only when it is absent.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: squidcode-mongo-data
+  namespace: squidcode
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
