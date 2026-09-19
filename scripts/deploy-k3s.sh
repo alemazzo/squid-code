@@ -142,6 +142,40 @@ for c in "${COMPONENTS[@]}"; do
   info "${deploy}: $(kubectl -n "$NAMESPACE" get pods -l "app=${deploy}" --no-headers | awk '{print $1" ("$3")"}' | paste -sd' ')"
 done
 
+# ----------------------------------------------------- grafana dashboards ---
+# Convention (vps-infra README, § Monitoring): the dashboards of an app live in the
+# Grafana folder named after the app, i.e. its namespace. The Grafana dashboard sidecar
+# picks up every ConfigMap labelled `grafana_dashboard=1` in the monitoring namespace and
+# writes each JSON into the subfolder of /tmp/dashboards named by the annotation
+# `k8s-sidecar-target-directory`; the dashboard provider replicates that structure as
+# Grafana folders. Applying them from here is what makes a new app carry its own folder
+# along without touching the Grafana configuration.
+#
+# `apply` (not `create`/`label` on the node) keeps the ConfigMaps declarative; a JSON big
+# enough to exceed the `last-applied-configuration` annotation limit (~256 KB, as
+# "Node Exporter Full") would have to be created with `create configmap` instead.
+
+MONITORING_NAMESPACE="${MONITORING_NAMESPACE:-monitoring}"
+DASHBOARDS_DIR="${REPO_ROOT}/deploy/observability/dashboards"
+
+if [[ -d "$DASHBOARDS_DIR" ]]; then
+  ok "applico le dashboard Grafana (cartella ${NAMESPACE})"
+  for json in "${DASHBOARDS_DIR}"/*.json; do
+    [[ -e "$json" ]] || continue          # no match: the glob stays literal
+    name="$(basename "$json" .json)"
+    cm="grafana-dash-${name}"
+    # label/annotate with --local rewrite the manifest on the fly, so the apply is the only
+    # write: `last-applied-configuration` matches the live object (kubectl diff stays
+    # meaningful) and a later apply cannot drop the folder annotation.
+    kubectl -n "$MONITORING_NAMESPACE" create configmap "$cm" \
+      --from-file="${name}.json=${json}" --dry-run=client -o yaml \
+      | kubectl label -f - grafana_dashboard=1 --local -o yaml \
+      | kubectl annotate -f - "k8s-sidecar-target-directory=/tmp/dashboards/${NAMESPACE}" --local -o yaml \
+      | kubectl apply -f - >/dev/null
+    info "${cm}: ${name} -> cartella ${NAMESPACE}"
+  done
+fi
+
 # ------------------------------------------------------------- caddy --------
 
 caddy_block() { # $1 name, $2 domain, $3 nodeport
