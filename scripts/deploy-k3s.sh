@@ -154,6 +154,9 @@ done
 # `apply` (not `create`/`label` on the node) keeps the ConfigMaps declarative; a JSON big
 # enough to exceed the `last-applied-configuration` annotation limit (~256 KB, as
 # "Node Exporter Full") would have to be created with `create configmap` instead.
+#
+# .github/workflows/dashboards.yml carries the same block for the CI path (a push on main
+# touching deploy/observability/dashboards/**): keep the two in sync.
 
 MONITORING_NAMESPACE="${MONITORING_NAMESPACE:-monitoring}"
 DASHBOARDS_DIR="${REPO_ROOT}/deploy/observability/dashboards"
