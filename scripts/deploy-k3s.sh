@@ -25,7 +25,10 @@ export PATH="/usr/local/bin:${PATH}"
 
 NAMESPACE="${K8S_NAMESPACE:-${NAMESPACE:-squidcode}}"
 REGISTRY="${REGISTRY:-ghcr.io/alemazzo/squid-code}"
-SUFFIX="${K8S_DOMAIN_SUFFIX:-5-175-171-84.sslip.io}"
+SUFFIX="${K8S_DOMAIN_SUFFIX:-alemazzo.duckdns.org}"
+# Suffisso precedente: i vecchi nomi restano risolvibili e vengono tenuti come redirect
+# permanente, cosi' i link gia' in giro continuano a funzionare. Svuotalo per non emetterli.
+LEGACY_SUFFIX="${K8S_LEGACY_DOMAIN_SUFFIX-5-175-171-84.sslip.io}"
 DOMAIN_FRONTEND="${DOMAIN_FRONTEND:-squidcode.${SUFFIX}}"
 DOMAIN_BACKEND="${DOMAIN_BACKEND:-api.squidcode.${SUFFIX}}"
 DOMAIN_LEETCODE="${DOMAIN_LEETCODE:-leetcode.squidcode.${SUFFIX}}"
@@ -181,16 +184,28 @@ fi
 
 # ------------------------------------------------------------- caddy --------
 
-caddy_block() { # $1 name, $2 domain, $3 nodeport
+caddy_block() { # $1 name, $2 domain, $3 nodeport, $4 nome legacy (opzionale, redirect)
   printf '%s {\n\tencode zstd gzip\n\treverse_proxy 127.0.0.1:%s {\n\t\theader_up X-Real-IP {remote_host}\n\t}\n\tlog {\n\t\toutput file /var/log/caddy/%s.access.log {\n\t\t\troll_size 10mb\n\t\t\troll_keep 3\n\t\t}\n\t}\n}\n' \
     "$2" "$3" "$1"
+  if [[ -n "${4:-}" ]]; then
+    printf '\n# Nome sslip.io precedente -> redirect permanente a quello canonico.\n%s {\n\tredir https://%s{uri} permanent\n}\n' \
+      "$4" "$2"
+  fi
+}
+
+# Traduce un dominio canonico nel suo equivalente sotto il suffisso vecchio (stessa parte
+# sinistra). Vuoto se il dominio e' stato sovrascritto e non usa il suffisso corrente.
+legacy_of() { # $1 dominio canonico
+  if [[ -n "$LEGACY_SUFFIX" && "$1" == *".${SUFFIX}" ]]; then
+    printf '%s.%s' "${1%".${SUFFIX}"}" "$LEGACY_SUFFIX"
+  fi
 }
 
 ok "configuro Caddy"
 mkdir -p "$SITES_DIR"
-in_components frontend && caddy_block squidcode-frontend "$DOMAIN_FRONTEND" "$NODEPORT_FRONTEND" > "${SITES_DIR}/squidcode-frontend.caddy"
-in_components backend  && caddy_block squidcode-backend  "$DOMAIN_BACKEND"  "$NODEPORT_BACKEND"  > "${SITES_DIR}/squidcode-backend.caddy"
-in_components leetcode && caddy_block squidcode-leetcode "$DOMAIN_LEETCODE" "$NODEPORT_LEETCODE" > "${SITES_DIR}/squidcode-leetcode.caddy"
+in_components frontend && caddy_block squidcode-frontend "$DOMAIN_FRONTEND" "$NODEPORT_FRONTEND" "$(legacy_of "$DOMAIN_FRONTEND")" > "${SITES_DIR}/squidcode-frontend.caddy"
+in_components backend  && caddy_block squidcode-backend  "$DOMAIN_BACKEND"  "$NODEPORT_BACKEND"  "$(legacy_of "$DOMAIN_BACKEND")"  > "${SITES_DIR}/squidcode-backend.caddy"
+in_components leetcode && caddy_block squidcode-leetcode "$DOMAIN_LEETCODE" "$NODEPORT_LEETCODE" "$(legacy_of "$DOMAIN_LEETCODE")" > "${SITES_DIR}/squidcode-leetcode.caddy"
 chmod 644 "${SITES_DIR}"/squidcode-*.caddy 2>/dev/null || true
 
 if ! caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null 2>&1; then

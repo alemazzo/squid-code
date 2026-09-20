@@ -31,13 +31,15 @@ punto di entrata è Caddy. Non assegnare :80/:443 a un pod.
 
 | URL | Servizio | NodePort |
 |---|---|---|
-| https://squidcode.5-175-171-84.sslip.io | frontend | 30090 |
-| https://api.squidcode.5-175-171-84.sslip.io | backend | 30091 |
-| https://leetcode.squidcode.5-175-171-84.sslip.io | leetcode-service | 30092 |
+| https://squidcode.alemazzo.duckdns.org | frontend | 30090 |
+| https://api.squidcode.alemazzo.duckdns.org | backend | 30091 |
+| https://leetcode.squidcode.alemazzo.duckdns.org | leetcode-service | 30092 |
 
-`5-175-171-84.sslip.io` è un wildcard DNS pubblico che risolve su questo VPS: per usare un
-dominio proprio basta puntarci un record `A` e aggiornare `DOMAIN_*` (script) e `SITE_*`/
-`frontend-origin` (workflow e ConfigMap).
+`alemazzo.duckdns.org` è il dominio DuckDNS che risolve su questo VPS e risponde per **qualsiasi**
+suo sottodominio. I vecchi nomi `*.5-175-171-84.sslip.io` restano come redirect permanente (301),
+quindi i link già in giro continuano a funzionare; per non emetterli più basta deployare con
+`K8S_LEGACY_DOMAIN_SUFFIX=` vuoto. Per usare un dominio proprio basta puntarci un record `A` e
+aggiornare `DOMAIN_*` (script) e `SITE_*`/`frontend-origin` (workflow e ConfigMap).
 
 ## Dati di MongoDB
 
@@ -114,5 +116,5 @@ cd services/frontend-service/application && npm install && npm run dev
 - **niente alta disponibilità**: nodo singolo, se il VPS cade i servizi sono giù.
 - **2 vCPU**: il collo di bottiglia sono i build, non la RAM. Le immagini si costruiscono una
   volta e si riusano.
-- **Let's Encrypt**: 5 certificati identici a settimana per dominio; `sslip.io` è condiviso da
-  tutti, quindi un'eventuale rate limit va aspettato.
+- **Let's Encrypt**: 5 certificati identici a settimana per dominio; il dominio è nostro, ma
+  la rate limit resta per host: una riemissione in loop va evitata comunque.
