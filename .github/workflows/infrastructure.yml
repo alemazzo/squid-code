@@ -11,9 +11,9 @@ on:
 env:
   kubernetesPath: infrastructure/kubernetes
   K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE || 'squidcode' }}
-  siteUrl: https://squidcode.5-175-171-84.sslip.io
-  backendUrl: https://api.squidcode.5-175-171-84.sslip.io
-  leetcodeUrl: https://leetcode.squidcode.5-175-171-84.sslip.io
+  siteUrl: https://squidcode.alemazzo.duckdns.org
+  backendUrl: https://api.squidcode.alemazzo.duckdns.org
+  leetcodeUrl: https://leetcode.squidcode.alemazzo.duckdns.org
 
 jobs:
 

@@ -20,7 +20,7 @@ env:
   registry: ghcr.io
   image: ghcr.io/alemazzo/squid-code/backend
   platforms: linux/amd64
-  siteUrl: https://api.squidcode.5-175-171-84.sslip.io
+  siteUrl: https://api.squidcode.alemazzo.duckdns.org
 
 jobs:
   build:
